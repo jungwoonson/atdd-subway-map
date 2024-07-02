@@ -66,20 +66,6 @@ public class StationAcceptanceTest {
                 .assertThat().body("size()", is(2));
     }
 
-    private static ExtractableResponse<Response> requestCreationOfStation(String stationName) {
-        Map<String, String> params = new HashMap<>();
-        params.put("name", stationName);
-
-        ExtractableResponse<Response> response =
-                RestAssured.given().log().all()
-                        .body(params)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .when().post("/stations")
-                        .then().log().all()
-                        .extract();
-        return response;
-    }
-
     /**
      * Given 지하철역을 생성하고
      * When 그 지하철역을 삭제하면
@@ -109,4 +95,17 @@ public class StationAcceptanceTest {
         assertThat(names).doesNotContain(STATION_NAME_1);
     }
 
+    private static ExtractableResponse<Response> requestCreationOfStation(String stationName) {
+        Map<String, String> params = new HashMap<>();
+        params.put("name", stationName);
+
+        ExtractableResponse<Response> response =
+                RestAssured.given().log().all()
+                        .body(params)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .when().post("/stations")
+                        .then().log().all()
+                        .extract();
+        return response;
+    }
 }
