@@ -32,7 +32,7 @@ public class StationAcceptanceTest {
     @Test
     void createStation() {
         // when
-        ExtractableResponse<Response> response = requestCreateStation(STATION_NAME_1);
+        ExtractableResponse<Response> response = requestCreationOfStation(STATION_NAME_1);
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
@@ -55,8 +55,8 @@ public class StationAcceptanceTest {
     @Test
     void readStation() {
         // given
-        requestCreateStation(STATION_NAME_1);
-        requestCreateStation(STATION_NAME_2);
+        requestCreationOfStation(STATION_NAME_1);
+        requestCreationOfStation(STATION_NAME_2);
 
         // when & then
         RestAssured.given().log().all()
@@ -66,7 +66,7 @@ public class StationAcceptanceTest {
                 .assertThat().body("size()", is(2));
     }
 
-    private static ExtractableResponse<Response> requestCreateStation(String stationName) {
+    private static ExtractableResponse<Response> requestCreationOfStation(String stationName) {
         Map<String, String> params = new HashMap<>();
         params.put("name", stationName);
 
@@ -89,7 +89,7 @@ public class StationAcceptanceTest {
     @Test
     void deleteStation() {
         // given
-        Integer id = requestCreateStation(STATION_NAME_1).jsonPath()
+        Integer id = requestCreationOfStation(STATION_NAME_1).jsonPath()
                 .get("id");
 
         // when
