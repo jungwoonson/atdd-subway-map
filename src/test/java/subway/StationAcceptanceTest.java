@@ -48,7 +48,7 @@ public class StationAcceptanceTest {
      */
     @DisplayName("지하철역을 조회한다.")
     @Test
-    void readStation() {
+    void lookUpStation() {
         // given
         requestCreationOfStation(STATION_NAME_1);
         requestCreationOfStation(STATION_NAME_2);
