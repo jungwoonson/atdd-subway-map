@@ -38,11 +38,7 @@ public class StationAcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
 
         // then
-        List<String> stationNames =
-                RestAssured.given().log().all()
-                        .when().get("/stations")
-                        .then().log().all()
-                        .extract().jsonPath().getList("name", String.class);
+        List<String> stationNames = lookUpStationNames();
         assertThat(stationNames).containsAnyOf(STATION_NAME_1);
     }
 
@@ -88,10 +84,7 @@ public class StationAcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
 
         // then
-        List<String> names = RestAssured.given().log().all()
-                .when().get("/stations")
-                .then().log().all()
-                .extract().jsonPath().getList("name", String.class);
+        List<String> names = lookUpStationNames();
         assertThat(names).doesNotContain(STATION_NAME_1);
     }
 
@@ -107,5 +100,12 @@ public class StationAcceptanceTest {
                         .then().log().all()
                         .extract();
         return response;
+    }
+
+    private static List<String> lookUpStationNames() {
+        return RestAssured.given().log().all()
+                .when().get("/stations")
+                .then().log().all()
+                .extract().jsonPath().getList("name", String.class);
     }
 }
