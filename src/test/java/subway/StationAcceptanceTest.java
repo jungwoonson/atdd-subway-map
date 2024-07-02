@@ -38,8 +38,7 @@ public class StationAcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
 
         // then
-        List<String> stationNames = lookUpStationNames();
-        assertThat(stationNames).containsAnyOf(STATION_NAME_1);
+        assertThat(lookUpStationNames()).containsAnyOf(STATION_NAME_1);
     }
 
     /**
@@ -84,22 +83,19 @@ public class StationAcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
 
         // then
-        List<String> names = lookUpStationNames();
-        assertThat(names).doesNotContain(STATION_NAME_1);
+        assertThat(lookUpStationNames()).doesNotContain(STATION_NAME_1);
     }
 
     private static ExtractableResponse<Response> requestCreationOfStation(String stationName) {
         Map<String, String> params = new HashMap<>();
         params.put("name", stationName);
 
-        ExtractableResponse<Response> response =
-                RestAssured.given().log().all()
-                        .body(params)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .when().post("/stations")
-                        .then().log().all()
-                        .extract();
-        return response;
+        return RestAssured.given().log().all()
+                .body(params)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().post("/stations")
+                .then().log().all()
+                .extract();
     }
 
     private static List<String> lookUpStationNames() {
