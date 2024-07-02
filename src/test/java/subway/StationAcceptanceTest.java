@@ -74,10 +74,7 @@ public class StationAcceptanceTest {
                 .get("id");
 
         // when
-        ExtractableResponse<Response> response = RestAssured.given().log().all()
-                .when().delete("/stations/" + id)
-                .then().log().all()
-                .extract();
+        ExtractableResponse<Response> response = requestDeleteStation(id);
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
@@ -103,5 +100,12 @@ public class StationAcceptanceTest {
                 .when().get("/stations")
                 .then().log().all()
                 .extract().jsonPath().getList("name", String.class);
+    }
+
+    private static ExtractableResponse<Response> requestDeleteStation(Integer id) {
+        return RestAssured.given().log().all()
+                .when().delete("/stations/" + id)
+                .then().log().all()
+                .extract();
     }
 }
