@@ -19,6 +19,10 @@ import static org.hamcrest.Matchers.is;
 @DisplayName("지하철역 관련 기능")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class StationAcceptanceTest {
+
+    private static final String STATION_NAME_1 = "강남역";
+    private static final String STATION_NAME_2 = "역삼역";
+
     /**
      * When 지하철역을 생성하면
      * Then 지하철역이 생성된다
@@ -28,7 +32,7 @@ public class StationAcceptanceTest {
     @Test
     void createStation() {
         // when
-        ExtractableResponse<Response> response = requestCreateStation("강남역");
+        ExtractableResponse<Response> response = requestCreateStation(STATION_NAME_1);
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
@@ -39,7 +43,7 @@ public class StationAcceptanceTest {
                         .when().get("/stations")
                         .then().log().all()
                         .extract().jsonPath().getList("name", String.class);
-        assertThat(stationNames).containsAnyOf("강남역");
+        assertThat(stationNames).containsAnyOf(STATION_NAME_1);
     }
 
     /**
@@ -51,8 +55,8 @@ public class StationAcceptanceTest {
     @Test
     void readStation() {
         // given
-        requestCreateStation("강남역");
-        requestCreateStation("역삼역");
+        requestCreateStation(STATION_NAME_1);
+        requestCreateStation(STATION_NAME_2);
 
         // when & then
         RestAssured.given().log().all()
