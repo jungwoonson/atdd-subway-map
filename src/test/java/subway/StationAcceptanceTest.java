@@ -32,7 +32,7 @@ public class StationAcceptanceTest {
     @Test
     void createStation() {
         // when
-        ExtractableResponse<Response> response = requestCreationOfStation(STATION_NAME_1);
+        ExtractableResponse<Response> response = createStation(STATION_NAME_1);
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
@@ -50,8 +50,8 @@ public class StationAcceptanceTest {
     @Test
     void lookUpStation() {
         // given
-        requestCreationOfStation(STATION_NAME_1);
-        requestCreationOfStation(STATION_NAME_2);
+        createStation(STATION_NAME_1);
+        createStation(STATION_NAME_2);
 
         // when & then
         RestAssured.given().log().all()
@@ -70,11 +70,11 @@ public class StationAcceptanceTest {
     @Test
     void deleteStation() {
         // given
-        Integer id = requestCreationOfStation(STATION_NAME_1).jsonPath()
+        Integer id = createStation(STATION_NAME_1).jsonPath()
                 .get("id");
 
         // when
-        ExtractableResponse<Response> response = requestDeleteStation(id);
+        ExtractableResponse<Response> response = deleteStation(id);
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
@@ -83,7 +83,7 @@ public class StationAcceptanceTest {
         assertThat(lookUpStationNames()).doesNotContain(STATION_NAME_1);
     }
 
-    private static ExtractableResponse<Response> requestCreationOfStation(String stationName) {
+    private static ExtractableResponse<Response> createStation(String stationName) {
         Map<String, String> params = new HashMap<>();
         params.put("name", stationName);
 
@@ -102,7 +102,7 @@ public class StationAcceptanceTest {
                 .extract().jsonPath().getList("name", String.class);
     }
 
-    private static ExtractableResponse<Response> requestDeleteStation(Integer id) {
+    private static ExtractableResponse<Response> deleteStation(Integer id) {
         return RestAssured.given().log().all()
                 .when().delete("/stations/" + id)
                 .then().log().all()
