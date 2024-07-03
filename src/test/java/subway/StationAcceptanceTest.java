@@ -40,7 +40,7 @@ public class StationAcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
 
         // then
-        assertThat(lookUpStationNames()).containsAnyOf(STATION_NAME_1);
+        assertThat(findNames(lookUpStations())).containsAnyOf(STATION_NAME_1);
     }
 
     /**
@@ -62,8 +62,7 @@ public class StationAcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
 
         // then
-        List<String> names = response.jsonPath().getList("name", String.class);
-        assertThat(names.size()).isEqualTo(2);
+        assertThat(findNames(response).size()).isEqualTo(2);
     }
 
     /**
@@ -85,7 +84,7 @@ public class StationAcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
 
         // then
-        assertThat(lookUpStationNames()).doesNotContain(STATION_NAME_1);
+        assertThat(findNames(lookUpStations())).doesNotContain(STATION_NAME_1);
     }
 
     private static ExtractableResponse<Response> createStation(String stationName) {
@@ -107,8 +106,8 @@ public class StationAcceptanceTest {
                 .extract();
     }
 
-    private static List<String> lookUpStationNames() {
-        return lookUpStations().jsonPath()
+    private static List<String> findNames(ExtractableResponse<Response> response) {
+        return response.jsonPath()
                 .getList("name", String.class);
     }
 
