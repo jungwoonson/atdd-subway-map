@@ -55,12 +55,15 @@ public class StationAcceptanceTest {
         createStation(STATION_NAME_1);
         createStation(STATION_NAME_2);
 
-        // when & then
-        RestAssured.given().log().all()
-                .when().get("/stations")
-                .then().log().all()
-                .assertThat().statusCode(HttpStatus.OK.value())
-                .assertThat().body("size()", is(2));
+        // when
+        ExtractableResponse<Response> response = lookUpStations();
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+
+        // then
+        List<String> names = response.jsonPath().getList("name", String.class);
+        assertThat(names.size()).isEqualTo(2);
     }
 
     /**
@@ -97,11 +100,16 @@ public class StationAcceptanceTest {
                 .extract();
     }
 
-    private static List<String> lookUpStationNames() {
+    private static ExtractableResponse<Response> lookUpStations() {
         return RestAssured.given().log().all()
                 .when().get("/stations")
                 .then().log().all()
-                .extract().jsonPath().getList("name", String.class);
+                .extract();
+    }
+
+    private static List<String> lookUpStationNames() {
+        return lookUpStations().jsonPath()
+                .getList("name", String.class);
     }
 
     private static ExtractableResponse<Response> deleteStation(Integer id) {
