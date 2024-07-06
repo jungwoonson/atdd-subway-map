@@ -68,7 +68,7 @@ public class LineAcceptanceTest {
      */
     @DisplayName("노선 목록을 조회한다.")
     @Test
-    void locoUpLineTest() {
+    void lookUpLinesTest() {
         // given
         createLine(CREATE_PARAM_1);
         createLine(CREATE_PARAM_2);
