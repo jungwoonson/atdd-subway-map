@@ -96,10 +96,9 @@ public class LineAcceptanceTest {
     void lookUpLineTest() {
         // given
         ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
-        Long id = findId(createdLineResponse);
 
         // when
-        ExtractableResponse<Response> response = lookUpLine(id);
+        ExtractableResponse<Response> response = lookUpLine(findId(createdLineResponse));
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -116,14 +115,13 @@ public class LineAcceptanceTest {
     void modifyLineTest() {
         // given
         ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
-        Long id = findId(createdLineResponse);
 
         // when
-        ExtractableResponse<Response> response = modifyLine(id, MODIFY_PARAM);
+        ExtractableResponse<Response> response = modifyLine(findId(createdLineResponse), MODIFY_PARAM);
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        ExtractableResponse<Response> lookedUpLine = lookUpLine(id);
+        ExtractableResponse<Response> lookedUpLine = lookUpLine(findId(createdLineResponse));
         assertThat(findName(lookedUpLine)).isEqualTo(LINE_NAME_2);
         assertThat(lookedUpLine.jsonPath().getString("color")).isEqualTo(COLOR_2);
     }
@@ -138,10 +136,9 @@ public class LineAcceptanceTest {
     void deleteLineTest() {
         // given
         ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
-        Long id = findId(createdLineResponse);
 
         // when
-        ExtractableResponse<Response> response = deleteLine(id);
+        ExtractableResponse<Response> response = deleteLine(findId(createdLineResponse));
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
