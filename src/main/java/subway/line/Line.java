@@ -31,6 +31,11 @@ public class Line {
         this.distance = builder.distance;
     }
 
+    public void modify(String name, String color) {
+        this.name = name;
+        this.color = color;
+    }
+
     public Long getId() {
         return id;
     }

@@ -35,6 +35,13 @@ public class LineService {
         return createLineResponse(line);
     }
 
+    @Transactional
+    public LineResponse modifyLine(Long id, LineRequest lineRequest) {
+        Line line = lineRepository.findOneById(id);
+        line.modify(lineRequest.getName(), lineRequest.getColor());
+        return createLineResponse(lineRepository.save(line));
+    }
+
     private Line createLine(LineRequest lineRequest) {
         return new Line.Builder()
                 .name(lineRequest.getName())
