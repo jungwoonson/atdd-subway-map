@@ -45,6 +45,11 @@ public class LineAcceptanceTest {
             "distance", DEFAULT_DISTANCE
     );
 
+    private static final Map<String, Object> MODIFY_PARAM = Map.of(
+            "name", LINE_NAME_2,
+            "color", COLOR_2
+    );
+
     /**
      * Given 새로운 지하철 노선 정보를 입력하고
      * When 관리자가 노선을 생성하면
@@ -101,6 +106,27 @@ public class LineAcceptanceTest {
         assertThat(response.jsonPath().getString("name")).isEqualTo(LINE_NAME_1);
     }
 
+    /**
+     * Given: 특정 지하철 노선이 등록되어 있고,
+     * When: 관리자가 해당 노선을 수정하면,
+     * Then: 해당 노선의 정보가 수정된다.
+     */
+    @DisplayName("노선을 수정한다.")
+    @Test
+    void modifyLineTest() {
+        // given
+        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
+        Long id = createdLineResponse.jsonPath().getLong("id");
+
+        // when
+        ExtractableResponse<Response> response = modifyLine(id, MODIFY_PARAM);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.jsonPath().getString("name")).isEqualTo(LINE_NAME_2);
+        assertThat(response.jsonPath().getString("color")).isEqualTo(COLOR_2);
+    }
+
     private ExtractableResponse<Response> createLine(Map<String, Object> params) {
         return RestAssured.given().log().all()
                 .body(params)
@@ -125,6 +151,15 @@ public class LineAcceptanceTest {
     private ExtractableResponse<Response> lookUpLine(Long id) {
         return RestAssured.given().log().all()
                 .when().get("/lines/" + id)
+                .then().log().all()
+                .extract();
+    }
+
+    private ExtractableResponse<Response> modifyLine(Long id, Map<String, Object> params) {
+        return RestAssured.given().log().all()
+                .body(params)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().put("/lines/" + id)
                 .then().log().all()
                 .extract();
     }
