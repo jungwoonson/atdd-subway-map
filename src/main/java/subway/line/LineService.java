@@ -42,6 +42,11 @@ public class LineService {
         return createLineResponse(lineRepository.save(line));
     }
 
+    @Transactional
+    public void deleteLine(Long id) {
+        lineRepository.deleteById(id);
+    }
+
     private Line createLine(LineRequest lineRequest) {
         return new Line.Builder()
                 .name(lineRequest.getName())
