@@ -81,6 +81,26 @@ public class LineAcceptanceTest {
         assertThat(findNames(response)).containsExactlyInAnyOrder(LINE_NAME_1, LINE_NAME_2);
     }
 
+    /**
+     * Given: 특정 지하철 노선이 등록되어 있고,
+     * When: 관리자가 해당 노선을 조회하면,
+     * Then: 해당 노선의 정보가 반환된다.
+     */
+    @DisplayName("노선을 조회한다.")
+    @Test
+    void lookUpLineTest() {
+        // given
+        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
+        Long id = createdLineResponse.jsonPath().getLong("id");
+
+        // when
+        ExtractableResponse<Response> response = lookUpLine(id);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.jsonPath().getString("name")).isEqualTo(LINE_NAME_1);
+    }
+
     private ExtractableResponse<Response> createLine(Map<String, Object> params) {
         return RestAssured.given().log().all()
                 .body(params)
@@ -100,5 +120,12 @@ public class LineAcceptanceTest {
     private List<String> findNames(ExtractableResponse<Response> response) {
         return response.jsonPath()
                 .getList("name", String.class);
+    }
+
+    private ExtractableResponse<Response> lookUpLine(Long id) {
+        return RestAssured.given().log().all()
+                .when().get("/lines/" + id)
+                .then().log().all()
+                .extract();
     }
 }
