@@ -31,8 +31,7 @@ public class LineService {
     }
 
     public LineResponse findLine(Long id) {
-        Line line = lineRepository.findOneById(id);
-        return createLineResponse(line);
+        return createLineResponse(lineRepository.findOneById(id));
     }
 
     @Transactional
