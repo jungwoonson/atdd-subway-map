@@ -74,10 +74,7 @@ public class LineAcceptanceTest {
         createLine(CREATE_PARAM_2);
 
         // when
-        ExtractableResponse<Response> response = RestAssured.given().log().all()
-                .when().get("/lines")
-                .then().log().all()
-                .extract();
+        ExtractableResponse<Response> response = lookUpLines();
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
