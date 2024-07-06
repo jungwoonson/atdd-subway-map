@@ -2,7 +2,7 @@ package subway.line;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import subway.StationResponse;
+import subway.station.StationResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
