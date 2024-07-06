@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import subway.StationResponse;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,6 +23,13 @@ public class LineService {
         return createLineResponse(line);
     }
 
+    public List<LineResponse> findAllLines() {
+        return lineRepository.findAll()
+                .stream()
+                .map(this::createLineResponse)
+                .collect(Collectors.toList());
+    }
+
     private Line createLine(LineRequest lineRequest) {
         return new Line.Builder()
                 .name(lineRequest.getName())
@@ -35,6 +43,7 @@ public class LineService {
     private LineResponse createLineResponse(Line line) {
         return new LineResponse.Builder()
                 .id(line.getId())
+                .name(line.getName())
                 .color(line.getColor())
                 .stations(createStations(line.getUpStationId(), line.getDownStationId()))
                 .build();

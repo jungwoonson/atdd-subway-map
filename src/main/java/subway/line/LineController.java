@@ -1,11 +1,10 @@
 package subway.line;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 public class LineController {
@@ -20,5 +19,11 @@ public class LineController {
         LineResponse line = lineService.lineSave(lineRequest);
         return ResponseEntity.created(URI.create("/lines/" + line.getId()))
                 .body(line);
+    }
+
+    @GetMapping("/lines")
+    public ResponseEntity<List<LineResponse>> showLines() {
+        return ResponseEntity.ok()
+                .body(lineService.findAllLines());
     }
 }
