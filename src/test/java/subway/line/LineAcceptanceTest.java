@@ -96,14 +96,14 @@ public class LineAcceptanceTest {
     void lookUpLineTest() {
         // given
         ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
-        Long id = createdLineResponse.jsonPath().getLong("id");
+        Long id = findId(createdLineResponse);
 
         // when
         ExtractableResponse<Response> response = lookUpLine(id);
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.jsonPath().getString("name")).isEqualTo(LINE_NAME_1);
+        assertThat(findName(response)).isEqualTo(LINE_NAME_1);
     }
 
     /**
@@ -116,7 +116,7 @@ public class LineAcceptanceTest {
     void modifyLineTest() {
         // given
         ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
-        Long id = createdLineResponse.jsonPath().getLong("id");
+        Long id = findId(createdLineResponse);
 
         // when
         ExtractableResponse<Response> response = modifyLine(id, MODIFY_PARAM);
@@ -124,7 +124,7 @@ public class LineAcceptanceTest {
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         ExtractableResponse<Response> lookedUpLine = lookUpLine(id);
-        assertThat(lookedUpLine.jsonPath().getString("name")).isEqualTo(LINE_NAME_2);
+        assertThat(findName(lookedUpLine)).isEqualTo(LINE_NAME_2);
         assertThat(lookedUpLine.jsonPath().getString("color")).isEqualTo(COLOR_2);
     }
 
@@ -138,7 +138,7 @@ public class LineAcceptanceTest {
     void deleteLineTest() {
         // given
         ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
-        Long id = createdLineResponse.jsonPath().getLong("id");
+        Long id = findId(createdLineResponse);
 
         // when
         ExtractableResponse<Response> response = deleteLine(id);
@@ -167,6 +167,15 @@ public class LineAcceptanceTest {
     private List<String> findNames(ExtractableResponse<Response> response) {
         return response.jsonPath()
                 .getList("name", String.class);
+    }
+
+    private static String findName(ExtractableResponse<Response> response) {
+        return response.jsonPath().getString("name");
+    }
+
+    private static long findId(ExtractableResponse<Response> createdLineResponse) {
+        return createdLineResponse.jsonPath()
+                .getLong("id");
     }
 
     private ExtractableResponse<Response> lookUpLine(Long id) {
