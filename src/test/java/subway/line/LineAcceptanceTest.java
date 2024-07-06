@@ -161,20 +161,6 @@ public class LineAcceptanceTest {
                 .extract();
     }
 
-    private List<String> findNames(ExtractableResponse<Response> response) {
-        return response.jsonPath()
-                .getList("name", String.class);
-    }
-
-    private static String findName(ExtractableResponse<Response> response) {
-        return response.jsonPath().getString("name");
-    }
-
-    private static long findId(ExtractableResponse<Response> createdLineResponse) {
-        return createdLineResponse.jsonPath()
-                .getLong("id");
-    }
-
     private ExtractableResponse<Response> lookUpLine(Long id) {
         return RestAssured.given().log().all()
                 .when().get("/lines/" + id)
@@ -196,5 +182,19 @@ public class LineAcceptanceTest {
                 .when().delete("/lines/" + id)
                 .then().log().all()
                 .extract();
+    }
+
+    private List<String> findNames(ExtractableResponse<Response> response) {
+        return response.jsonPath()
+                .getList("name", String.class);
+    }
+
+    private static String findName(ExtractableResponse<Response> response) {
+        return response.jsonPath().getString("name");
+    }
+
+    private static long findId(ExtractableResponse<Response> createdLineResponse) {
+        return createdLineResponse.jsonPath()
+                .getLong("id");
     }
 }
