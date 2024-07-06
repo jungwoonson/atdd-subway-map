@@ -30,6 +30,11 @@ public class LineService {
                 .collect(Collectors.toList());
     }
 
+    public LineResponse findLine(Long id) {
+        Line line = lineRepository.findOneById(id);
+        return createLineResponse(line);
+    }
+
     private Line createLine(LineRequest lineRequest) {
         return new Line.Builder()
                 .name(lineRequest.getName())
