@@ -123,8 +123,9 @@ public class LineAcceptanceTest {
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.jsonPath().getString("name")).isEqualTo(LINE_NAME_2);
-        assertThat(response.jsonPath().getString("color")).isEqualTo(COLOR_2);
+        ExtractableResponse<Response> lookedUpLine = lookUpLine(id);
+        assertThat(lookedUpLine.jsonPath().getString("name")).isEqualTo(LINE_NAME_2);
+        assertThat(lookedUpLine.jsonPath().getString("color")).isEqualTo(COLOR_2);
     }
 
     /**
@@ -144,7 +145,7 @@ public class LineAcceptanceTest {
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
-        assertThat(findNames(response)).doesNotContain(LINE_NAME_1);
+        assertThat(findNames(lookUpLines())).doesNotContain(LINE_NAME_1);
     }
 
     private ExtractableResponse<Response> createLine(Map<String, Object> params) {
