@@ -1,4 +1,4 @@
-package subway;
+package subway.station;
 
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
@@ -8,16 +8,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.is;
 
 @DisplayName("지하철역 관련 기능")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class StationAcceptanceTest {
 
     private static final String STATION_NAME_1 = "강남역";
@@ -38,7 +39,7 @@ public class StationAcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
 
         // then
-        assertThat(lookUpStationNames()).containsAnyOf(STATION_NAME_1);
+        assertThat(findNames(lookUpStations())).containsAnyOf(STATION_NAME_1);
     }
 
     /**
@@ -53,12 +54,14 @@ public class StationAcceptanceTest {
         createStation(STATION_NAME_1);
         createStation(STATION_NAME_2);
 
-        // when & then
-        RestAssured.given().log().all()
-                .when().get("/stations")
-                .then().log().all()
-                .assertThat().statusCode(HttpStatus.OK.value())
-                .assertThat().body("size()", is(2));
+        // when
+        ExtractableResponse<Response> response = lookUpStations();
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+
+        // then
+        assertThat(findNames(response).size()).isEqualTo(2);
     }
 
     /**
@@ -80,7 +83,7 @@ public class StationAcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
 
         // then
-        assertThat(lookUpStationNames()).doesNotContain(STATION_NAME_1);
+        assertThat(findNames(lookUpStations())).doesNotContain(STATION_NAME_1);
     }
 
     private static ExtractableResponse<Response> createStation(String stationName) {
@@ -95,11 +98,16 @@ public class StationAcceptanceTest {
                 .extract();
     }
 
-    private static List<String> lookUpStationNames() {
+    private static ExtractableResponse<Response> lookUpStations() {
         return RestAssured.given().log().all()
                 .when().get("/stations")
                 .then().log().all()
-                .extract().jsonPath().getList("name", String.class);
+                .extract();
+    }
+
+    private static List<String> findNames(ExtractableResponse<Response> response) {
+        return response.jsonPath()
+                .getList("name", String.class);
     }
 
     private static ExtractableResponse<Response> deleteStation(Integer id) {

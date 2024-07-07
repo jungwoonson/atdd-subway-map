@@ -1,4 +1,4 @@
-package subway;
+package subway.station;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
