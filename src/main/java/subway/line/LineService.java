@@ -2,6 +2,7 @@ package subway.line;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import subway.station.StationRepository;
 import subway.station.StationResponse;
 
 import java.util.List;
@@ -13,8 +14,11 @@ public class LineService {
 
     private LineRepository lineRepository;
 
-    public LineService(LineRepository lineRepository) {
+    private StationRepository stationRepository;
+
+    public LineService(LineRepository lineRepository, StationRepository stationRepository) {
         this.lineRepository = lineRepository;
+        this.stationRepository = stationRepository;
     }
 
     @Transactional
@@ -71,17 +75,6 @@ public class LineService {
     }
 
     private StationResponse createStation(Long stationId) {
-        return new StationResponse(stationId, findStationNameById(stationId));
-    }
-
-    private String findStationNameById(Long stationId) {
-        switch (stationId.intValue()) {
-            case 1:
-                return "지하철역";
-            case 2:
-                return "새로운지하철역";
-            default:
-                return "또다른지하철역";
-        }
+        return new StationResponse(stationId, stationRepository.findNameById(stationId));
     }
 }

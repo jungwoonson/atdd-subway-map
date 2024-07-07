@@ -3,6 +3,7 @@ package subway.line;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +21,13 @@ import static subway.line.LineAcceptanceTestFixture.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class LineAcceptanceTest {
+
+    @BeforeEach
+    void setUp() {
+        createStation(STATION_ID_1, STATION_NAME_1);
+        createStation(STATION_ID_2, STATION_NAME_2);
+        createStation(STATION_ID_3, STATION_NAME_3);
+    }
 
     /**
      * Given 새로운 지하철 노선 정보를 입력하고

@@ -30,3 +30,4 @@
    - [ ] 이미 해당 노선에 등록되어 있는 역을 새로운 구간의 하행역으로 등록하려 하면 400 응답
    - [x] test fixture 클래스 분리
    - [x] 노선이 구간(역 목록)을 가질 수 있도록 upStationId, downStationsId를 stations로 수정
+   - [x] 노선 stations 에 등록된 역 아이디를 사용하여 DB에서 역 정보를 가져오도록 수정
