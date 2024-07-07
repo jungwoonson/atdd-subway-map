@@ -14,41 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static subway.line.LineAcceptanceTestFixture.*;
 
 @DisplayName("지하철 역 노선 관련 기능")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class LineAcceptanceTest {
-
-    private static final String LINE_NAME_1 = "신분당선";
-    private static final String LINE_NAME_2 = "분당선";
-    private static final String COLOR_1 = "bg-red-600";
-    private static final String COLOR_2 = "bg-green-600";
-    private static final Long STATION_ID_1 = 1L;
-    private static final Long STATION_ID_2 = 2L;
-    private static final Long STATION_ID_3 = 3L;
-    private static final Integer DEFAULT_DISTANCE = 10;
-
-    private static final Map<String, Object> CREATE_PARAM_1 = Map.of(
-            "name", LINE_NAME_1,
-            "color", COLOR_1,
-            "upStationId", STATION_ID_1,
-            "downStationId", STATION_ID_2,
-            "distance", DEFAULT_DISTANCE
-    );
-
-    private static final Map<String, Object> CREATE_PARAM_2 = Map.of(
-            "name", LINE_NAME_2,
-            "color", COLOR_2,
-            "upStationId", STATION_ID_1,
-            "downStationId", STATION_ID_3,
-            "distance", DEFAULT_DISTANCE
-    );
-
-    private static final Map<String, Object> MODIFY_PARAM = Map.of(
-            "name", LINE_NAME_2,
-            "color", COLOR_2
-    );
 
     /**
      * Given 새로운 지하철 노선 정보를 입력하고
