@@ -50,8 +50,7 @@ public class LineService {
         return new Line.Builder()
                 .name(lineRequest.getName())
                 .color(lineRequest.getColor())
-                .upStationId(lineRequest.getUpStationId())
-                .downStationId(lineRequest.getDownStationId())
+                .stations(lineRequest.getUpStationId(), lineRequest.getDownStationId())
                 .distance(lineRequest.getDistance())
                 .build();
     }
@@ -61,15 +60,14 @@ public class LineService {
                 .id(line.getId())
                 .name(line.getName())
                 .color(line.getColor())
-                .stations(createStations(line.getUpStationId(), line.getDownStationId()))
+                .stations(createStationResponses(line.getStations()))
                 .build();
     }
 
-    private List<StationResponse> createStations(Long upStationId, Long downStationId) {
-        return List.of(
-                createStation(upStationId),
-                createStation(downStationId)
-        );
+    private List<StationResponse> createStationResponses(List<Long> stationIds) {
+        return stationIds.stream()
+                .map(this::createStation)
+                .collect(Collectors.toList());
     }
 
     private StationResponse createStation(Long stationId) {

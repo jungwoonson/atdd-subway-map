@@ -1,6 +1,7 @@
 package subway.line;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Line {
@@ -12,10 +13,8 @@ public class Line {
     private String name;
     @Column(length = 20, nullable = false)
     private String color;
-    @Column(nullable = false)
-    private Long upStationId;
-    @Column(nullable = false)
-    private Long downStationId;
+    @Convert(converter = StringListConverter.class)
+    private List<Long> stations;
     @Column(nullable = false)
     private Integer distance;
 
@@ -26,8 +25,7 @@ public class Line {
         this.id = builder.id;
         this.name = builder.name;
         this.color = builder.color;
-        this.upStationId = builder.upStationId;
-        this.downStationId = builder.downStationId;
+        this.stations = builder.stations;
         this.distance = builder.distance;
     }
 
@@ -48,12 +46,8 @@ public class Line {
         return color;
     }
 
-    public Long getUpStationId() {
-        return upStationId;
-    }
-
-    public Long getDownStationId() {
-        return downStationId;
+    public List<Long> getStations() {
+        return List.copyOf(stations);
     }
 
     public Integer getDistance() {
@@ -64,8 +58,7 @@ public class Line {
         private Long id;
         private String name;
         private String color;
-        private Long upStationId;
-        private Long downStationId;
+        private List<Long> stations;
         private Integer distance;
 
         public Builder id(Long id) {
@@ -83,13 +76,8 @@ public class Line {
             return this;
         }
 
-        public Builder upStationId(Long upStationId) {
-            this.upStationId = upStationId;
-            return this;
-        }
-
-        public Builder downStationId(Long downStationId) {
-            this.downStationId = downStationId;
+        public Builder stations(Long upStationId, Long downStationId) {
+            this.stations = List.of(upStationId, downStationId);
             return this;
         }
 
