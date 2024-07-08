@@ -27,6 +27,7 @@ public class LineAcceptanceTest {
         createStation(STATION_ID_1, STATION_NAME_1);
         createStation(STATION_ID_2, STATION_NAME_2);
         createStation(STATION_ID_3, STATION_NAME_3);
+        createStation(STATION_ID_4, STATION_NAME_4);
     }
 
     /**
@@ -151,7 +152,7 @@ public class LineAcceptanceTest {
      */
     @DisplayName("존재하지 않는 노선에 구간을 등록하면 오류가 발생한다.")
     @Test
-    void notExistLine() {
+    void notExistLineTest() {
         // when
         ExtractableResponse<Response> response = registerSection(1L, SECTION_PARAM_1);
 
@@ -166,7 +167,7 @@ public class LineAcceptanceTest {
      */
     @DisplayName("존재하지 않는 역이 포함된 구간을 노선에 등록하면 오류를 응답한다.")
     @Test
-    void notExistStation() {
+    void notExistStationTest() {
         // given
         ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
 
@@ -175,6 +176,24 @@ public class LineAcceptanceTest {
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    /**
+     * Given: 특정 노선이 등록되어 있고,
+     * When: 노선의 하행역과 다른 역이 상행역인 구간을 등록하면,
+     * Then: 오류를 응답한다.
+     */
+    @DisplayName("새로운 구간의 상행역이 해당 노선의 하행역이 아니면 오류를 응답한다.")
+    @Test
+    void notSameUpStationAndDownStationTest() {
+        // given
+        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
+
+        // when
+        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), SECTION_PARAM_3);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
     private ExtractableResponse<Response> createLine(Map<String, Object> params) {

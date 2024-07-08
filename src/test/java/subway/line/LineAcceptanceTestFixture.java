@@ -20,7 +20,6 @@ public class LineAcceptanceTestFixture {
     static final String STATION_NAME_2 = "홍대역";
     static final String STATION_NAME_3 = "강남역";
     static final String STATION_NAME_4 = "성수역";
-    static final String STATION_NAME_5 = "망원역";
     static final Integer DEFAULT_DISTANCE = 10;
 
     static final Map<String, Object> CREATE_PARAM_1 = Map.of(
@@ -53,6 +52,12 @@ public class LineAcceptanceTestFixture {
     static final Map<String, Object> SECTION_PARAM_2 = Map.of(
             "upStationId", STATION_ID_2,
             "downStationId", STATION_ID_5,
+            "distance", DEFAULT_DISTANCE
+    );
+
+    static final Map<String, Object> SECTION_PARAM_3 = Map.of(
+            "upStationId", STATION_ID_3,
+            "downStationId", STATION_ID_4,
             "distance", DEFAULT_DISTANCE
     );
 
