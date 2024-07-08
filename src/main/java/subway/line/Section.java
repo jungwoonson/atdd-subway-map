@@ -27,16 +27,12 @@ public class Section {
     public Section() {
     }
 
-    public Section(Line line, Station upStation, Station downStation, Integer distance, boolean isFirst) {
-        this.line = line;
-        this.upStation = upStation;
-        this.downStation = downStation;
-        this.distance = distance;
-        this.isFirst = isFirst;
-    }
-
-    public static Section of(Line line, Long upStationId, Long downStationId, Integer distance) {
-        return new Section(line, new Station(upStationId), new Station(downStationId), distance, true);
+    private Section(Builder builder) {
+        this.line = builder.line;
+        this.upStation = builder.upStation;
+        this.downStation = builder.downStation;
+        this.distance = builder.distance;
+        this.isFirst = builder.isFirst;
     }
 
     public Long getUpStationId() {
@@ -65,5 +61,47 @@ public class Section {
 
     public boolean isFirst() {
         return isFirst;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    // Builder class
+    public static class Builder {
+        private Line line;
+        private Station upStation;
+        private Station downStation;
+        private Integer distance;
+        private boolean isFirst;
+
+        public Builder line(Line line) {
+            this.line = line;
+            return this;
+        }
+
+        public Builder upStation(Long upStation) {
+            this.upStation = new Station(upStation);
+            return this;
+        }
+
+        public Builder downStation(Long downStation) {
+            this.downStation = new Station(downStation);
+            return this;
+        }
+
+        public Builder distance(Integer distance) {
+            this.distance = distance;
+            return this;
+        }
+
+        public Builder isFirst(boolean isFirst) {
+            this.isFirst = isFirst;
+            return this;
+        }
+
+        public Section build() {
+            return new Section(this);
+        }
     }
 }

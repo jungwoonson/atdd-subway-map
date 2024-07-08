@@ -41,8 +41,8 @@ public class LineAcceptanceTestFixture {
     );
 
     static final Map<String, Object> SECTION_PARAM_1 = Map.of(
-            "upStationId", STATION_ID_1,
-            "downStationId", STATION_ID_2,
+            "upStationId", STATION_ID_2,
+            "downStationId", STATION_ID_3,
             "distance", DEFAULT_DISTANCE
     );
 

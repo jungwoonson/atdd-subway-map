@@ -38,7 +38,7 @@ public class Sections {
 
     private static void appendStations(Stations stations, Section section) {
         Station lastStation = stations.lastStation();
-        if (lastStation.equals(section.getUpStation())) {
+        if (lastStation.getId().equals(section.getUpStation().getId())) {
             stations.add(section.getDownStation());
         }
     }

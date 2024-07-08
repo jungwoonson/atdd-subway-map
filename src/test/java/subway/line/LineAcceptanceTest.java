@@ -141,7 +141,7 @@ public class LineAcceptanceTest {
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
         List<Long> stationsIds = lookUpLine(findId(createdLineResponse)).jsonPath()
-                .getList("$.stations.id", Long.class);
+                .getList("stations.id", Long.class);
         assertThat(stationsIds).containsExactly(STATION_ID_1, STATION_ID_2, STATION_ID_3);
     }
 

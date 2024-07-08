@@ -2,6 +2,7 @@ package subway.line;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import subway.station.Station;
 import subway.station.StationRepository;
 import subway.station.StationResponse;
 
@@ -50,13 +51,20 @@ public class LineService {
         lineRepository.deleteById(id);
     }
 
+    @Transactional
+    public LineResponse addSections(Long id, SectionRequest sectionRequest) {
+        Line line = lineRepository.findOneById(id);
+        line.addSection(createSection(line, sectionRequest));
+        return createLineResponse(lineRepository.save(line));
+    }
+
     private Line createLine(LineRequest lineRequest) {
         Line line = new Line.Builder()
                 .name(lineRequest.getName())
                 .color(lineRequest.getColor())
                 .build();
 
-        Section section = Section.of(line, lineRequest.getUpStationId(), lineRequest.getDownStationId(), lineRequest.getDistance());
+        Section section = createSection(line, lineRequest);
 
         line.addSection(section);
 
@@ -79,6 +87,28 @@ public class LineService {
     }
 
     private StationResponse createStation(Long stationId) {
-        return new StationResponse(stationId, stationRepository.findNameById(stationId));
+        Station station = stationRepository.findById(stationId)
+                .orElseThrow(IllegalArgumentException::new);
+        return new StationResponse(stationId, station.getName());
+    }
+
+    private Section createSection(Line line, LineRequest lineRequest) {
+        return Section.builder()
+                .line(line)
+                .upStation(lineRequest.getUpStationId())
+                .downStation(lineRequest.getDownStationId())
+                .distance(lineRequest.getDistance())
+                .isFirst(true)
+                .build();
+    }
+
+    private Section createSection(Line line, SectionRequest sectionRequest) {
+        return Section.builder()
+                .line(line)
+                .upStation(sectionRequest.getUpStationId())
+                .downStation(sectionRequest.getDownStationId())
+                .distance(sectionRequest.getDistance())
+                .isFirst(false)
+                .build();
     }
 }
