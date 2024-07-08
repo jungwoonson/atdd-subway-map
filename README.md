@@ -31,3 +31,4 @@
    - [x] test fixture 클래스 분리
    - [x] 노선이 구간(역 목록)을 가질 수 있도록 upStationId, downStationsId를 stations로 수정
    - [x] 노선 stations 에 등록된 역 아이디를 사용하여 DB에서 역 정보를 가져오도록 수정
+   - [x] 구간 엔티티 추가

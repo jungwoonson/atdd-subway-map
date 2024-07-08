@@ -51,12 +51,16 @@ public class LineService {
     }
 
     private Line createLine(LineRequest lineRequest) {
-        return new Line.Builder()
+        Line line = new Line.Builder()
                 .name(lineRequest.getName())
                 .color(lineRequest.getColor())
-                .stations(lineRequest.getUpStationId(), lineRequest.getDownStationId())
-                .distance(lineRequest.getDistance())
                 .build();
+
+        Section section = Section.of(line, lineRequest.getUpStationId(), lineRequest.getDownStationId(), lineRequest.getDistance());
+
+        line.addSection(section);
+
+        return line;
     }
 
     private LineResponse createLineResponse(Line line) {
@@ -64,7 +68,7 @@ public class LineService {
                 .id(line.getId())
                 .name(line.getName())
                 .color(line.getColor())
-                .stations(createStationResponses(line.getStations()))
+                .stations(createStationResponses(line.getStationIds()))
                 .build();
     }
 
