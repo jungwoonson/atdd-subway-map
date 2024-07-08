@@ -2,6 +2,7 @@ package subway.line;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import subway.line.exception.NotExistLineException;
 import subway.station.Station;
 import subway.station.StationRepository;
 import subway.station.StationResponse;
@@ -36,12 +37,12 @@ public class LineService {
     }
 
     public LineResponse findLine(Long id) {
-        return createLineResponse(lineRepository.findOneById(id));
+        return createLineResponse(findLineBy(id));
     }
 
     @Transactional
     public LineResponse modifyLine(Long id, LineRequest lineRequest) {
-        Line line = lineRepository.findOneById(id);
+        Line line = findLineBy(id);
         line.modify(lineRequest.getName(), lineRequest.getColor());
         return createLineResponse(lineRepository.save(line));
     }
@@ -53,9 +54,14 @@ public class LineService {
 
     @Transactional
     public LineResponse addSections(Long id, SectionRequest sectionRequest) {
-        Line line = lineRepository.findOneById(id);
+        Line line = findLineBy(id);
         line.addSection(createSection(line, sectionRequest));
         return createLineResponse(lineRepository.save(line));
+    }
+
+    private Line findLineBy(Long id) {
+        return lineRepository.findOneById(id)
+                .orElseThrow(NotExistLineException::new);
     }
 
     private Line createLine(LineRequest lineRequest) {
