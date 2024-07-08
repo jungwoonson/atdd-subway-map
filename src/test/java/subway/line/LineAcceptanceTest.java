@@ -145,6 +145,20 @@ public class LineAcceptanceTest {
         assertThat(stationsIds).containsExactly(STATION_ID_1, STATION_ID_2, STATION_ID_3);
     }
 
+    /**
+     * When: 존재하지 않는 노선에 구간을 등록하면,
+     * Then: 오류를 응답한다.
+     */
+    @DisplayName("존재하지 않는 노선에 구간을 등록하면 오류가 발생한다.")
+    @Test
+    void notExistLine() {
+        // when
+        ExtractableResponse<Response> response = registerSection(1L, CREATE_PARAM_1);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
     private ExtractableResponse<Response> createLine(Map<String, Object> params) {
         return RestAssured.given().log().all()
                 .body(params)
