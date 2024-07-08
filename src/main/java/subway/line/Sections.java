@@ -1,5 +1,6 @@
 package subway.line;
 
+import subway.line.exception.NotSameNewUpStationAndExistingDownStationException;
 import subway.station.Station;
 import subway.station.Stations;
 
@@ -17,7 +18,15 @@ public class Sections {
     private List<Section> sections = new ArrayList<>();
 
     public void add(Section section) {
-        sections.add(section);
+        if (sections.isEmpty()) {
+            sections.add(section);
+            return;
+        }
+        if (section.isUpStationAndDownStationOf(findLastSection())) {
+            sections.add(section);
+            return;
+        }
+        throw new NotSameNewUpStationAndExistingDownStationException();
     }
 
     public List<Long> getStationIds() {
@@ -48,5 +57,9 @@ public class Sections {
                 .filter(Section::isFirst)
                 .findFirst()
                 .orElseThrow(RuntimeException::new);
+    }
+
+    private Section findLastSection() {
+        return sections.get(sections.size() - 1);
     }
 }

@@ -35,12 +35,8 @@ public class Section {
         this.isFirst = builder.isFirst;
     }
 
-    public Long getUpStationId() {
-        return upStation.getId();
-    }
-
-    public Long getDownStationId() {
-        return downStation.getId();
+    public boolean isUpStationAndDownStationOf(Section section) {
+        return upStation.equals(section.downStation);
     }
 
     public Long getId() {
