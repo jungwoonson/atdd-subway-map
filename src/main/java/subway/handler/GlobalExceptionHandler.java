@@ -5,12 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import subway.line.exception.NotExistLineException;
+import subway.station.exception.NotExistStationException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NotExistLineException.class)
-    public ResponseEntity<String> handleNotExistLineException(NotExistLineException e) {
+    @ExceptionHandler({NotExistStationException.class, NotExistLineException.class})
+    public ResponseEntity<String> handleNotExistException(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(e.getMessage());
     }

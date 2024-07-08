@@ -6,6 +6,7 @@ import subway.line.exception.NotExistLineException;
 import subway.station.Station;
 import subway.station.StationRepository;
 import subway.station.StationResponse;
+import subway.station.exception.NotExistStationException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -94,15 +95,15 @@ public class LineService {
 
     private StationResponse createStation(Long stationId) {
         Station station = stationRepository.findById(stationId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NotExistStationException::new);
         return new StationResponse(stationId, station.getName());
     }
 
     private Section createSection(Line line, LineRequest lineRequest) {
         return Section.builder()
                 .line(line)
-                .upStation(lineRequest.getUpStationId())
-                .downStation(lineRequest.getDownStationId())
+                .upStation(findStationBy(lineRequest.getUpStationId()))
+                .downStation(findStationBy(lineRequest.getDownStationId()))
                 .distance(lineRequest.getDistance())
                 .isFirst(true)
                 .build();
@@ -111,10 +112,15 @@ public class LineService {
     private Section createSection(Line line, SectionRequest sectionRequest) {
         return Section.builder()
                 .line(line)
-                .upStation(sectionRequest.getUpStationId())
-                .downStation(sectionRequest.getDownStationId())
+                .upStation(findStationBy(sectionRequest.getUpStationId()))
+                .downStation(findStationBy(sectionRequest.getDownStationId()))
                 .distance(sectionRequest.getDistance())
                 .isFirst(false)
                 .build();
+    }
+
+    private Station findStationBy(Long stationId) {
+        return stationRepository.findById(stationId)
+                .orElseThrow(NotExistStationException::new);
     }
 }

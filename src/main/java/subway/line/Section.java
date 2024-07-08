@@ -80,13 +80,13 @@ public class Section {
             return this;
         }
 
-        public Builder upStation(Long upStation) {
-            this.upStation = new Station(upStation);
+        public Builder upStation(Station upStation) {
+            this.upStation = upStation;
             return this;
         }
 
-        public Builder downStation(Long downStation) {
-            this.downStation = new Station(downStation);
+        public Builder downStation(Station downStation) {
+            this.downStation = downStation;
             return this;
         }
 
