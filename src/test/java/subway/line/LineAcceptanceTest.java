@@ -153,7 +153,25 @@ public class LineAcceptanceTest {
     @Test
     void notExistLine() {
         // when
-        ExtractableResponse<Response> response = registerSection(1L, CREATE_PARAM_1);
+        ExtractableResponse<Response> response = registerSection(1L, SECTION_PARAM_1);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    /**
+     * Given: 특정 지하철 노선이 등록되어 있고,
+     * When: 존재하지 않는 역이 포함된 구간을 등록하면,
+     * Then: 오류를 응답한다.
+     */
+    @DisplayName("존재하지 않는 역이 포함된 구간을 노선에 등록하면 오류를 응답한다.")
+    @Test
+    void notExistStation() {
+        // given
+        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
+
+        // when
+        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), SECTION_PARAM_2);
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
