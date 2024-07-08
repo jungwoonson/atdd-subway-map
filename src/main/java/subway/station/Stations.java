@@ -1,7 +1,6 @@
 package subway.station;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -30,6 +29,10 @@ public class Stations {
         return stations.stream()
                 .map(Station::getId)
                 .collect(Collectors.toList());
+    }
+
+    public boolean existStation(Station station) {
+        return stations.contains(station);
     }
 
     @Override

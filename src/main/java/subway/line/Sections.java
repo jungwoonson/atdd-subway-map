@@ -1,5 +1,6 @@
 package subway.line;
 
+import subway.line.exception.AlreadyRegisteredStationException;
 import subway.line.exception.NotSameNewUpStationAndExistingDownStationException;
 import subway.station.Station;
 import subway.station.Stations;
@@ -22,15 +23,22 @@ public class Sections {
             sections.add(section);
             return;
         }
-        if (section.isUpStationAndDownStationOf(findLastSection())) {
-            sections.add(section);
-            return;
+        if (section.notSameUpStationAndDownStationOf(findLastSection())) {
+            throw new NotSameNewUpStationAndExistingDownStationException();
         }
-        throw new NotSameNewUpStationAndExistingDownStationException();
+        if (isExistStation(section)) {
+            throw new AlreadyRegisteredStationException();
+        }
+        sections.add(section);
     }
 
     public List<Long> getStationIds() {
         return extractStations().getStationIds();
+    }
+
+    private boolean isExistStation(Section section) {
+        Stations stations = extractStations();
+        return stations.existStation(section.getDownStation());
     }
 
     private Stations extractStations() {
