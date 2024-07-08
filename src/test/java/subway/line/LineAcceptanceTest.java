@@ -124,6 +124,27 @@ public class LineAcceptanceTest {
         assertThat(findNames(lookUpLines())).doesNotContain(LINE_NAME_1);
     }
 
+    /**
+     * Given: 특정 지하철 노선이 등록되어 있고,
+     * When: 해당 노선에 구간을 등록하면,
+     * Then: 해당 노선에 구간에 추가된다.
+     */
+    @DisplayName("노선에 구간을 등록한다.")
+    @Test
+    void registerSectionTest() {
+        // given
+        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
+
+        // when
+        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), SECTION_PARAM_1);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+        List<Long> stationsIds = lookUpLine(findId(createdLineResponse)).jsonPath()
+                .getList("$.stations.id", Long.class);
+        assertThat(stationsIds).containsExactly(STATION_ID_1, STATION_ID_2, STATION_ID_3);
+    }
+
     private ExtractableResponse<Response> createLine(Map<String, Object> params) {
         return RestAssured.given().log().all()
                 .body(params)
@@ -159,6 +180,15 @@ public class LineAcceptanceTest {
     private ExtractableResponse<Response> deleteLine(Long id) {
         return RestAssured.given().log().all()
                 .when().delete("/lines/" + id)
+                .then().log().all()
+                .extract();
+    }
+
+    private ExtractableResponse<Response> registerSection(Long id, Map<String, Object> params) {
+        return RestAssured.given().log().all()
+                .body(params)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().post(String.format("/lines/%d/sections", id))
                 .then().log().all()
                 .extract();
     }

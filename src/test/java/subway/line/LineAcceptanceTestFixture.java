@@ -40,6 +40,12 @@ public class LineAcceptanceTestFixture {
             "color", COLOR_2
     );
 
+    static final Map<String, Object> SECTION_PARAM_1 = Map.of(
+            "upStationId", STATION_ID_1,
+            "downStationId", STATION_ID_2,
+            "distance", DEFAULT_DISTANCE
+    );
+
     static void createStation(Long id, String name) {
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
