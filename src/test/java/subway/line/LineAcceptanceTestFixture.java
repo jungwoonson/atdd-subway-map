@@ -61,6 +61,12 @@ public class LineAcceptanceTestFixture {
             "distance", DEFAULT_DISTANCE
     );
 
+    static final Map<String, Object> SECTION_PARAM_4 = Map.of(
+            "upStationId", STATION_ID_2,
+            "downStationId", STATION_ID_1,
+            "distance", DEFAULT_DISTANCE
+    );
+
     static void createStation(Long id, String name) {
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
