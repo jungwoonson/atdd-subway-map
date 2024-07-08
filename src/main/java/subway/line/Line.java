@@ -1,11 +1,7 @@
 package subway.line;
 
-import subway.station.Station;
-
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 public class Line {
@@ -18,8 +14,8 @@ public class Line {
     @Column(length = 20, nullable = false)
     private String color;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "line", orphanRemoval = true)
-    private List<Section> sections;
+    @Embedded
+    private Sections sections;
 
     public Line() {
     }
@@ -28,6 +24,7 @@ public class Line {
         this.id = builder.id;
         this.name = builder.name;
         this.color = builder.color;
+        this.sections = new Sections();
     }
 
     public void modify(String name, String color) {
@@ -36,41 +33,11 @@ public class Line {
     }
 
     public void addSection(Section section) {
-        if (sections == null) {
-            sections = new ArrayList<>();
-        }
         sections.add(section);
     }
 
     public List<Long> getStationIds() {
-        return mapId(extractStations());
-    }
-
-    private static List<Long> mapId(List<Station> stations) {
-        return stations.stream()
-                .map(Station::getId)
-                .collect(Collectors.toList());
-    }
-
-    private List<Station> extractStations() {
-        Section firstSection = findFirstSection();
-
-        List<Station> stations = new ArrayList<>();
-        stations.add(firstSection.getUpStation());
-        stations.add(firstSection.getDownStation());
-        for (Section section : sections) {
-            if (stations.get(stations.size() - 1).equals(section.getUpStation())) {
-                stations.add(section.getDownStation());
-            }
-        }
-        return stations;
-    }
-
-    private Section findFirstSection() {
-        return sections.stream()
-                .filter(Section::isFirst)
-                .findFirst()
-                .orElseThrow(RuntimeException::new);
+        return sections.getStationIds();
     }
 
     public Long getId() {
