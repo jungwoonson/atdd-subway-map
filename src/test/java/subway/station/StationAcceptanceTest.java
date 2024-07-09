@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static subway.util.AssertUtil.assertResponseCode;
 
 @DisplayName("지하철역 관련 기능")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -36,7 +37,7 @@ public class StationAcceptanceTest {
         ExtractableResponse<Response> response = createStation(STATION_NAME_1);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+        assertResponseCode(response, HttpStatus.CREATED);
 
         // then
         assertThat(findNames(lookUpStations())).containsAnyOf(STATION_NAME_1);
@@ -58,7 +59,7 @@ public class StationAcceptanceTest {
         ExtractableResponse<Response> response = lookUpStations();
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertResponseCode(response, HttpStatus.OK);
 
         // then
         assertThat(findNames(response).size()).isEqualTo(2);
@@ -80,7 +81,7 @@ public class StationAcceptanceTest {
         ExtractableResponse<Response> response = deleteStation(id);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+        assertResponseCode(response, HttpStatus.NO_CONTENT);
 
         // then
         assertThat(findNames(lookUpStations())).doesNotContain(STATION_NAME_1);

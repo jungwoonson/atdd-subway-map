@@ -16,6 +16,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static subway.line.LineAcceptanceTestFixture.*;
+import static subway.util.AssertUtil.assertResponseCode;
 
 @DisplayName("지하철 역 노선 관련 기능")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -42,7 +43,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> response = createLine(CREATE_PARAM_1);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+        assertResponseCode(response, HttpStatus.CREATED);
         assertThat(findNames(lookUpLines())).containsExactlyInAnyOrder(LINE_NAME_1);
     }
 
@@ -62,7 +63,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> response = lookUpLines();
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertResponseCode(response, HttpStatus.OK);
         assertThat(findNames(response)).containsExactlyInAnyOrder(LINE_NAME_1, LINE_NAME_2);
     }
 
@@ -81,7 +82,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> response = lookUpLine(findId(createdLineResponse));
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertResponseCode(response, HttpStatus.OK);
         assertThat(findName(response)).isEqualTo(LINE_NAME_1);
     }
 
@@ -100,7 +101,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> response = modifyLine(findId(createdLineResponse), MODIFY_PARAM);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertResponseCode(response, HttpStatus.OK);
         ExtractableResponse<Response> lookedUpLine = lookUpLine(findId(createdLineResponse));
         assertThat(findName(lookedUpLine)).isEqualTo(LINE_NAME_2);
         assertThat(lookedUpLine.jsonPath().getString("color")).isEqualTo(COLOR_2);
@@ -121,7 +122,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> response = deleteLine(findId(createdLineResponse));
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+        assertResponseCode(response, HttpStatus.NO_CONTENT);
         assertThat(findNames(lookUpLines())).doesNotContain(LINE_NAME_1);
     }
 
@@ -140,7 +141,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), SECTION_PARAM_1);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+        assertResponseCode(response, HttpStatus.CREATED);
         List<Long> stationsIds = lookUpStationIds(findId(createdLineResponse));
         assertThat(stationsIds).containsExactly(STATION_ID_1, STATION_ID_2, STATION_ID_3);
     }
@@ -156,7 +157,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> response = registerSection(1L, SECTION_PARAM_1);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertResponseCode(response, HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -174,7 +175,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), SECTION_PARAM_2);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertResponseCode(response, HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -192,7 +193,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), SECTION_PARAM_3);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertResponseCode(response, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -210,7 +211,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), SECTION_PARAM_4);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertResponseCode(response, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -229,7 +230,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> response = deleteSection(findId(createdLineResponse), STATION_ID_3);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertResponseCode(response, HttpStatus.OK);
         List<Long> stationIds = lookUpStationIds(findId(createdLineResponse));
         assertThat(stationIds).doesNotContain(STATION_ID_3);
     }
@@ -250,7 +251,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> response = deleteSection(findId(createdLineResponse), STATION_ID_2);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertResponseCode(response, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -268,7 +269,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> response = deleteSection(findId(createdLineResponse), STATION_ID_2);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertResponseCode(response, HttpStatus.BAD_REQUEST);
     }
 
     private ExtractableResponse<Response> createLine(Map<String, Object> params) {
