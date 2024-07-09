@@ -164,7 +164,7 @@ public class LineAcceptanceTest {
      * When: 존재하지 않는 역이 포함된 구간을 등록하면,
      * Then: 오류를 응답한다.
      */
-    @DisplayName("존재하지 않는 역이 포함된 구간을 노선에 등록하면 오류를 응답한다.")
+    @DisplayName("존재하지 않는 역이 포함된 구간을 노선에 등록하면 오류가 발생한다.")
     @Test
     void notExistStationExceptionTest() {
         // given
@@ -182,7 +182,7 @@ public class LineAcceptanceTest {
      * When: 노선의 하행역과 다른 역이 상행역인 구간을 등록하면,
      * Then: 오류를 응답한다.
      */
-    @DisplayName("새로운 구간의 상행역이 해당 노선의 하행역이 아니면 오류를 응답한다.")
+    @DisplayName("새로운 구간의 상행역이 해당 노선의 하행역이 아니면 오류가 발생한다.")
     @Test
     void notSameUpStationAndDownStationExceptionTest() {
         // given
@@ -200,7 +200,7 @@ public class LineAcceptanceTest {
      * When: 노선에 등록되어 있는 역이 하행역인 구간을 등록하면,
      * Then: 오류를 응답한다.
      */
-    @DisplayName("새로운 구간의 상행역이 해당 노선의 하행역이 아니면 오류를 응답한다.")
+    @DisplayName("새로운 구간의 상행역이 해당 노선의 하행역이 아니면 오류가 발생한다.")
     @Test
     void alreadyRegisteredStationExceptionTest() {
         // given
@@ -239,7 +239,7 @@ public class LineAcceptanceTest {
      * When: 노선의 하행역이 아닌 역을 제거하면,
      * Then: 오류를 응답한다.
      */
-    @DisplayName("지하철 노선에 등록된 역(하행 종점역)만 제거할 수 있다. 즉, 마지막 구간만 제거할 수 있다.")
+    @DisplayName("지하철 노선에 등록된 하행 종점역이 아닌 구간을 제거하려 하면 오류가 발생한다.")
     @Test
     void deleteNotDownStationExceptionTest() {
         // given
@@ -258,7 +258,7 @@ public class LineAcceptanceTest {
      * When: 노선의 하행역 구간을 제거하면,
      * Then: 오류를 응답한다.
      */
-    @DisplayName("지하철 노선에 상행 종점역과 하행 종점역만 있는 경우(구간이 1개인 경우) 역을 삭제할 수 없다.")
+    @DisplayName("지하철 노선에 구간이 1개인 경우 구간을 제거하려하면 오류가 발생한다.")
     @Test
     void deleteSectionOfOnlyOneSectionLineExceptionTest() {
         // given
