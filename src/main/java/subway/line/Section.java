@@ -48,11 +48,11 @@ public class Section {
     }
 
     public Station getUpStation() {
-        return Station.of(upStation);
+        return Station.from(upStation);
     }
 
     public Station getDownStation() {
-        return Station.of(downStation);
+        return Station.from(downStation);
     }
 
     public boolean isFirst() {

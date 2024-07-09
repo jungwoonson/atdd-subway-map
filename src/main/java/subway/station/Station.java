@@ -23,7 +23,7 @@ public class Station {
         this.name = station.getName();
     }
 
-    public static Station of(Station station) {
+    public static Station from(Station station) {
         return new Station(station);
     }
 
