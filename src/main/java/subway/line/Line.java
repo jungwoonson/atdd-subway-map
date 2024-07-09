@@ -58,8 +58,8 @@ public class Line {
         return color;
     }
 
-    public void deleteSection(Station station) {
-        sections.delete(station);
+    public void deleteSection(Long stationId) {
+        sections.delete(stationId);
     }
 
     public static class Builder {

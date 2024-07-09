@@ -1,6 +1,7 @@
 package subway.line;
 
 import subway.line.exception.AlreadyRegisteredStationException;
+import subway.line.exception.NotDownStationException;
 import subway.line.exception.NotSameNewUpStationAndExistingDownStationException;
 import subway.station.Station;
 import subway.station.Stations;
@@ -78,8 +79,12 @@ public class Sections {
         }
     }
 
-    public void delete(Station station) {
-        sections.remove(findLastSection());
+    public void delete(Long stationId) {
+        Section lastSection = findLastSection();
+        if (!lastSection.isDownStation(stationId)) {
+            throw new NotDownStationException();
+        }
+        sections.remove(lastSection);
     }
 
     public boolean isEmpty() {
