@@ -141,8 +141,7 @@ public class LineAcceptanceTest {
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-        List<Long> stationsIds = lookUpLine(findId(createdLineResponse)).jsonPath()
-                .getList("stations.id", Long.class);
+        List<Long> stationsIds = lookUpStationIds(findId(createdLineResponse));
         assertThat(stationsIds).containsExactly(STATION_ID_1, STATION_ID_2, STATION_ID_3);
     }
 
@@ -231,8 +230,7 @@ public class LineAcceptanceTest {
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        List<Long> stationIds = lookUpLine(findId(createdLineResponse)).jsonPath()
-                .getList("stations.id", Long.class);
+        List<Long> stationIds = lookUpStationIds(findId(createdLineResponse));
         assertThat(stationIds).doesNotContain(STATION_ID_3);
     }
 
@@ -326,6 +324,11 @@ public class LineAcceptanceTest {
                 .when().delete(String.format("/lines/%s/sections?stationId=%s", id, stationId))
                 .then().log().all()
                 .extract();
+    }
+
+    private List<Long> lookUpStationIds(Long lindId) {
+        return lookUpLine(lindId).jsonPath()
+                .getList("stations.id", Long.class);
     }
 
     private List<String> findNames(ExtractableResponse<Response> response) {
