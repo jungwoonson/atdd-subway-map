@@ -214,6 +214,28 @@ public class LineAcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
+    /**
+     * Given: 특정 노선에 구간이 2개 이상 등록되어 있고,
+     * When: 노선의 하행역을 제거하면,
+     * Then: 노선을 조회했을 때 하행역이 제거된다.
+     */
+    @DisplayName("지하철 노선에 구간을 제거한다.")
+    @Test
+    void deleteSectionTest() {
+        // given
+        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
+        registerSection(findId(createdLineResponse), SECTION_PARAM_1);
+
+        // when
+        ExtractableResponse<Response> response = deleteSection(findId(createdLineResponse), STATION_ID_3);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        List<Long> stationIds = lookUpLine(findId(createdLineResponse)).jsonPath()
+                .getList("stations.id", Long.class);
+        assertThat(stationIds).doesNotContain(STATION_ID_3);
+    }
+
     private ExtractableResponse<Response> createLine(Map<String, Object> params) {
         return RestAssured.given().log().all()
                 .body(params)
@@ -258,6 +280,13 @@ public class LineAcceptanceTest {
                 .body(params)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().post(String.format("/lines/%d/sections", id))
+                .then().log().all()
+                .extract();
+    }
+
+    private ExtractableResponse<Response> deleteSection(Long id, Long stationId) {
+        return RestAssured.given().log().all()
+                .when().delete(String.format("/lines/%s/sections?stationId=%s", id, stationId))
                 .then().log().all()
                 .extract();
     }
