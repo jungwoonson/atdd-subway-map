@@ -14,12 +14,17 @@ public class Station {
     public Station() {
     }
 
-    public Station(Long id) {
-        this.id = id;
-    }
-
     public Station(String name) {
         this.name = name;
+    }
+
+    private Station(Station station) {
+        this.id = station.getId();
+        this.name = station.getName();
+    }
+
+    public static Station of(Station station) {
+        return new Station(station);
     }
 
     public Long getId() {

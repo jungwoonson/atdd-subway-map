@@ -32,7 +32,11 @@ public class Line {
         this.color = color;
     }
 
-    public void addSection(Section section) {
+    public void registerSection(Section section) {
+        if (sections.isEmpty()) {
+            sections = Sections.from(section);
+            return;
+        }
         sections.add(section);
     }
 

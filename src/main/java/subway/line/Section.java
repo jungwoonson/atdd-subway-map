@@ -44,15 +44,11 @@ public class Section {
     }
 
     public Station getUpStation() {
-        return upStation;
+        return Station.of(upStation);
     }
 
     public Station getDownStation() {
-        return downStation;
-    }
-
-    public Integer getDistance() {
-        return distance;
+        return Station.of(downStation);
     }
 
     public boolean isFirst() {

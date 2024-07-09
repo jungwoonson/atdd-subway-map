@@ -13,8 +13,8 @@ public class Stations {
         this.stations = stations;
     }
 
-    public static Stations of(Station upStation, Station downStation) {
-        return new Stations(new ArrayList<>(List.of(upStation, downStation)));
+    public static Stations of(Station upStationId, Station downStationId) {
+        return new Stations(new ArrayList<>(List.of(upStationId, downStationId)));
     }
 
     public void add(Station station) {

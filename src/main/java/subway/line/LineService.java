@@ -54,9 +54,9 @@ public class LineService {
     }
 
     @Transactional
-    public LineResponse addSections(Long id, SectionRequest sectionRequest) {
+    public LineResponse registerSections(Long id, SectionRequest sectionRequest) {
         Line line = findLineBy(id);
-        line.addSection(createSection(line, sectionRequest));
+        line.registerSection(createSection(line, sectionRequest));
         return createLineResponse(lineRepository.save(line));
     }
 
@@ -71,9 +71,9 @@ public class LineService {
                 .color(lineRequest.getColor())
                 .build();
 
-        Section section = createSection(line, lineRequest);
+        Section section = createFirstSection(line, lineRequest);
 
-        line.addSection(section);
+        line.registerSection(section);
 
         return line;
     }
@@ -99,7 +99,7 @@ public class LineService {
         return new StationResponse(stationId, station.getName());
     }
 
-    private Section createSection(Line line, LineRequest lineRequest) {
+    private Section createFirstSection(Line line, LineRequest lineRequest) {
         return Section.builder()
                 .line(line)
                 .upStation(findStationBy(lineRequest.getUpStationId()))

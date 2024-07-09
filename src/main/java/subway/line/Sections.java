@@ -18,27 +18,38 @@ public class Sections {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "line", orphanRemoval = true)
     private List<Section> sections = new ArrayList<>();
 
+    public Sections() {
+    }
+
+    private Sections(Section section) {
+        sections.add(section);
+    }
+
+    public static Sections from(Section section) {
+        return new Sections(section);
+    }
+
     public void add(Section section) {
-        if (sections.isEmpty()) {
-            sections.add(section);
-            return;
-        }
         if (section.notSameUpStationAndDownStationOf(findLastSection())) {
             throw new NotSameNewUpStationAndExistingDownStationException();
         }
-        if (isExistStation(section)) {
+        if (existStation(section.getDownStation())) {
             throw new AlreadyRegisteredStationException();
         }
         sections.add(section);
     }
 
-    public List<Long> getStationIds() {
-        return extractStations().getStationIds();
+    private Section findLastSection() {
+        return sections.get(sections.size() - 1);
     }
 
-    private boolean isExistStation(Section section) {
+    private boolean existStation(Station downStation) {
         Stations stations = extractStations();
-        return stations.existStation(section.getDownStation());
+        return stations.existStation(downStation);
+    }
+
+    public List<Long> getStationIds() {
+        return extractStations().getStationIds();
     }
 
     private Stations extractStations() {
@@ -53,13 +64,6 @@ public class Sections {
         return stations;
     }
 
-    private static void appendStations(Stations stations, Section section) {
-        Station lastStation = stations.lastStation();
-        if (lastStation.getId().equals(section.getUpStation().getId())) {
-            stations.add(section.getDownStation());
-        }
-    }
-
     private Section findFirstSection() {
         return sections.stream()
                 .filter(Section::isFirst)
@@ -67,7 +71,14 @@ public class Sections {
                 .orElseThrow(RuntimeException::new);
     }
 
-    private Section findLastSection() {
-        return sections.get(sections.size() - 1);
+    private void appendStations(Stations stations, Section section) {
+        Station lastStation = stations.lastStation();
+        if (lastStation.equals(section.getUpStation())) {
+            stations.add(section.getDownStation());
+        }
+    }
+
+    public boolean isEmpty() {
+        return sections.isEmpty();
     }
 }
