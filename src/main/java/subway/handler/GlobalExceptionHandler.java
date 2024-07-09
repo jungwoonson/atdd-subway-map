@@ -4,10 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import subway.line.exception.AlreadyRegisteredStationException;
-import subway.line.exception.NotDownStationException;
-import subway.line.exception.NotExistLineException;
-import subway.line.exception.NotSameNewUpStationAndExistingDownStationException;
+import subway.line.exception.*;
 import subway.station.exception.NotExistStationException;
 
 @ControllerAdvice
@@ -22,9 +19,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             NotSameNewUpStationAndExistingDownStationException.class,
             AlreadyRegisteredStationException.class,
-            NotDownStationException.class
+            NotDownStationException.class,
+            LastOneSectionException.class
     })
-    public ResponseEntity<String> handleBadRequestException(IllegalArgumentException e) {
+    public ResponseEntity<String> handleBadRequestException(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(e.getMessage());
     }
