@@ -237,16 +237,34 @@ public class LineAcceptanceTest {
     }
 
     /**
-     * - Given: 특정 노선에 구간이 2개 이상 등록되어 있고,
-     * - When: 노선의 하행역이 아닌 역을 제거하면,
-     * - Then: 오류를 응답한다.
+     * Given: 특정 노선에 구간이 2개 이상 등록되어 있고,
+     * When: 노선의 하행역이 아닌 역을 제거하면,
+     * Then: 오류를 응답한다.
      */
-    @DisplayName("지하철 노선에 구간을 제거한다.")
+    @DisplayName("지하철 노선에 등록된 역(하행 종점역)만 제거할 수 있다. 즉, 마지막 구간만 제거할 수 있다.")
     @Test
     void deleteNotDownStationExceptionTest() {
         // given
         ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
         registerSection(findId(createdLineResponse), SECTION_PARAM_1);
+
+        // when
+        ExtractableResponse<Response> response = deleteSection(findId(createdLineResponse), STATION_ID_2);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    /**
+     * Given: 특정 노선에 구간이 1개 등록되어 있고,
+     * When: 노선의 하행역 구간을 제거하면,
+     * Then: 오류를 응답한다.
+     */
+    @DisplayName("지하철 노선에 상행 종점역과 하행 종점역만 있는 경우(구간이 1개인 경우) 역을 삭제할 수 없다.")
+    @Test
+    void deleteSectionOfOnlyOneSectionLineExceptionTest() {
+        // given
+        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
 
         // when
         ExtractableResponse<Response> response = deleteSection(findId(createdLineResponse), STATION_ID_2);
