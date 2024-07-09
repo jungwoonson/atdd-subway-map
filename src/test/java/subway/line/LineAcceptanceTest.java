@@ -236,6 +236,25 @@ public class LineAcceptanceTest {
         assertThat(stationIds).doesNotContain(STATION_ID_3);
     }
 
+    /**
+     * - Given: 특정 노선에 구간이 2개 이상 등록되어 있고,
+     * - When: 노선의 하행역이 아닌 역을 제거하면,
+     * - Then: 오류를 응답한다.
+     */
+    @DisplayName("지하철 노선에 구간을 제거한다.")
+    @Test
+    void deleteNotDownStationExceptionTest() {
+        // given
+        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
+        registerSection(findId(createdLineResponse), SECTION_PARAM_1);
+
+        // when
+        ExtractableResponse<Response> response = deleteSection(findId(createdLineResponse), STATION_ID_2);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
     private ExtractableResponse<Response> createLine(Map<String, Object> params) {
         return RestAssured.given().log().all()
                 .body(params)
