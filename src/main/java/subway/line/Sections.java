@@ -78,6 +78,10 @@ public class Sections {
         }
     }
 
+    public void delete(Station station) {
+        sections.remove(findLastSection());
+    }
+
     public boolean isEmpty() {
         return sections.isEmpty();
     }

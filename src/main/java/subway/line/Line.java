@@ -1,5 +1,7 @@
 package subway.line;
 
+import subway.station.Station;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -54,6 +56,10 @@ public class Line {
 
     public String getColor() {
         return color;
+    }
+
+    public void deleteSection(Station station) {
+        sections.delete(station);
     }
 
     public static class Builder {

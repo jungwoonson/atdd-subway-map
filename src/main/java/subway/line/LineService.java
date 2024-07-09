@@ -65,6 +65,14 @@ public class LineService {
                 .orElseThrow(NotExistLineException::new);
     }
 
+    @Transactional
+    public LineResponse deleteSection(Long lineId, Long stationId) {
+        Line line = findLineBy(lineId);
+        Station station = findStationBy(stationId);
+        line.deleteSection(station);
+        return createLineResponse(lineRepository.save(line));
+    }
+
     private Line createLine(LineRequest lineRequest) {
         Line line = new Line.Builder()
                 .name(lineRequest.getName())
