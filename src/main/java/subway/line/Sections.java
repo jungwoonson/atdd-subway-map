@@ -27,12 +27,23 @@ public class Sections {
         sections.add(section);
     }
 
-    public static Sections from(Section section) {
-        return new Sections(section);
+    public static Sections of(Line line, Station upStation, Station downStation, Integer distance) {
+        return new Sections(createFirstSection(line, upStation, downStation, distance));
+    }
+
+    private static Section createFirstSection(Line line, Station upStation, Station downStation, Integer distance) {
+        return Section.builder()
+                .line(line)
+                .upStation(upStation)
+                .downStation(downStation)
+                .distance(distance)
+                .isFirst(true)
+                .build();
     }
 
     public void add(Section section) {
-        if (section.notSameUpStationAndDownStationOf(findLastSection())) {
+        Section lastSection = findLastSection();
+        if (lastSection.notSameDownStation(section.getUpStation())) {
             throw new NotSameNewUpStationAndExistingDownStationException();
         }
         if (existStation(section.getDownStation())) {

@@ -55,8 +55,10 @@ public class LineService {
 
     @Transactional
     public LineResponse registerSections(Long id, SectionRequest sectionRequest) {
+        Station upStation = findStationBy(sectionRequest.getUpStationId());
+        Station downStation = findStationBy(sectionRequest.getDownStationId());
         Line line = findLineBy(id);
-        line.registerSection(createSection(line, sectionRequest));
+        line.registerSection(upStation, downStation, sectionRequest.getDistance());
         return createLineResponse(lineRepository.save(line));
     }
 
@@ -73,16 +75,13 @@ public class LineService {
     }
 
     private Line createLine(LineRequest lineRequest) {
-        Line line = Line.builder()
+        return Line.builder()
                 .name(lineRequest.getName())
                 .color(lineRequest.getColor())
+                .upStation(findStationBy(lineRequest.getUpStationId()))
+                .downStation(findStationBy(lineRequest.getDownStationId()))
+                .distance(lineRequest.getDistance())
                 .build();
-
-        Section section = createFirstSection(line, lineRequest);
-
-        line.registerSection(section);
-
-        return line;
     }
 
     private LineResponse createLineResponse(Line line) {
@@ -104,26 +103,6 @@ public class LineService {
         Station station = stationRepository.findById(stationId)
                 .orElseThrow(NotExistStationException::new);
         return new StationResponse(stationId, station.getName());
-    }
-
-    private Section createFirstSection(Line line, LineRequest lineRequest) {
-        return Section.builder()
-                .line(line)
-                .upStation(findStationBy(lineRequest.getUpStationId()))
-                .downStation(findStationBy(lineRequest.getDownStationId()))
-                .distance(lineRequest.getDistance())
-                .isFirst(true)
-                .build();
-    }
-
-    private Section createSection(Line line, SectionRequest sectionRequest) {
-        return Section.builder()
-                .line(line)
-                .upStation(findStationBy(sectionRequest.getUpStationId()))
-                .downStation(findStationBy(sectionRequest.getDownStationId()))
-                .distance(sectionRequest.getDistance())
-                .isFirst(false)
-                .build();
     }
 
     private Station findStationBy(Long stationId) {

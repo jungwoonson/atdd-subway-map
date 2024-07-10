@@ -26,7 +26,7 @@ public class Line {
         this.id = builder.id;
         this.name = builder.name;
         this.color = builder.color;
-        this.sections = new Sections();
+        this.sections = Sections.of(this, builder.upStation, builder.downStation, builder.distance);
     }
 
     public void modify(String name, String color) {
@@ -34,12 +34,18 @@ public class Line {
         this.color = color;
     }
 
-    public void registerSection(Section section) {
-        if (sections.isEmpty()) {
-            sections = Sections.from(section);
-            return;
-        }
-        sections.add(section);
+    public void registerSection(Station upStation, Station downStation, Integer distance) {
+        sections.add(createNotFirstStation(this, upStation, downStation, distance));
+    }
+
+    private static Section createNotFirstStation(Line line, Station upStation, Station downStation, Integer distance) {
+        return Section.builder()
+                .line(line)
+                .upStation(upStation)
+                .downStation(downStation)
+                .distance(distance)
+                .isFirst(false)
+                .build();
     }
 
     public List<Long> getStationIds() {
@@ -70,6 +76,9 @@ public class Line {
         private Long id;
         private String name;
         private String color;
+        private Station upStation;
+        private Station downStation;
+        private Integer distance;
 
         public Builder id(Long id) {
             this.id = id;
@@ -83,6 +92,21 @@ public class Line {
 
         public Builder color(String color) {
             this.color = color;
+            return this;
+        }
+
+        public Builder upStation(Station upStation) {
+            this.upStation = upStation;
+            return this;
+        }
+
+        public Builder downStation(Station downStation) {
+            this.downStation = downStation;
+            return this;
+        }
+
+        public Builder distance(Integer distance) {
+            this.distance = distance;
             return this;
         }
 
