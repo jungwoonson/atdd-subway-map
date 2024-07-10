@@ -3,7 +3,6 @@ package subway.line;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,14 +22,6 @@ import static subway.util.AssertUtil.assertResponseCode;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class LineAcceptanceTest {
 
-    @BeforeEach
-    void setUp() {
-        createStation(STATION_ID_1, STATION_NAME_1);
-        createStation(STATION_ID_2, STATION_NAME_2);
-        createStation(STATION_ID_3, STATION_NAME_3);
-        createStation(STATION_ID_4, STATION_NAME_4);
-    }
-
     /**
      * Given 새로운 지하철 노선 정보를 입력하고
      * When 관리자가 노선을 생성하면
@@ -40,11 +31,11 @@ public class LineAcceptanceTest {
     @Test
     void createLineTest() {
         // when
-        ExtractableResponse<Response> response = createLine(CREATE_PARAM_1);
+        ExtractableResponse<Response> response = createLine(신분당선_PARAM);
 
         // then
         assertResponseCode(response, HttpStatus.CREATED);
-        assertThat(findNames(lookUpLines())).containsExactlyInAnyOrder(LINE_NAME_1);
+        assertThat(findNames(lookUpLines())).containsExactlyInAnyOrder(신분당선);
     }
 
     /**
@@ -56,15 +47,15 @@ public class LineAcceptanceTest {
     @Test
     void lookUpLinesTest() {
         // given
-        createLine(CREATE_PARAM_1);
-        createLine(CREATE_PARAM_2);
+        createLine(신분당선_PARAM);
+        createLine(분당선_PARAM);
 
         // when
         ExtractableResponse<Response> response = lookUpLines();
 
         // then
         assertResponseCode(response, HttpStatus.OK);
-        assertThat(findNames(response)).containsExactlyInAnyOrder(LINE_NAME_1, LINE_NAME_2);
+        assertThat(findNames(response)).containsExactlyInAnyOrder(신분당선, 분당선);
     }
 
     /**
@@ -76,14 +67,14 @@ public class LineAcceptanceTest {
     @Test
     void lookUpLineTest() {
         // given
-        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
+        ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
 
         // when
         ExtractableResponse<Response> response = lookUpLine(findId(createdLineResponse));
 
         // then
         assertResponseCode(response, HttpStatus.OK);
-        assertThat(findName(response)).isEqualTo(LINE_NAME_1);
+        assertThat(findName(response)).isEqualTo(신분당선);
     }
 
     /**
@@ -95,7 +86,7 @@ public class LineAcceptanceTest {
     @Test
     void modifyLineTest() {
         // given
-        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
+        ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
 
         // when
         ExtractableResponse<Response> response = modifyLine(findId(createdLineResponse), MODIFY_PARAM);
@@ -103,8 +94,8 @@ public class LineAcceptanceTest {
         // then
         assertResponseCode(response, HttpStatus.OK);
         ExtractableResponse<Response> lookedUpLine = lookUpLine(findId(createdLineResponse));
-        assertThat(findName(lookedUpLine)).isEqualTo(LINE_NAME_2);
-        assertThat(lookedUpLine.jsonPath().getString("color")).isEqualTo(COLOR_2);
+        assertThat(findName(lookedUpLine)).isEqualTo(분당선);
+        assertThat(lookedUpLine.jsonPath().getString("color")).isEqualTo(GREEN);
     }
 
     /**
@@ -116,14 +107,14 @@ public class LineAcceptanceTest {
     @Test
     void deleteLineTest() {
         // given
-        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
+        ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
 
         // when
         ExtractableResponse<Response> response = deleteLine(findId(createdLineResponse));
 
         // then
         assertResponseCode(response, HttpStatus.NO_CONTENT);
-        assertThat(findNames(lookUpLines())).doesNotContain(LINE_NAME_1);
+        assertThat(findNames(lookUpLines())).doesNotContain(신분당선);
     }
 
     /**
@@ -135,15 +126,15 @@ public class LineAcceptanceTest {
     @Test
     void registerSectionTest() {
         // given
-        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
+        ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
 
         // when
-        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), SECTION_PARAM_1);
+        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), 홍대역_강남역_구간);
 
         // then
         assertResponseCode(response, HttpStatus.CREATED);
         List<Long> stationsIds = lookUpStationIds(findId(createdLineResponse));
-        assertThat(stationsIds).containsExactly(STATION_ID_1, STATION_ID_2, STATION_ID_3);
+        assertThat(stationsIds).containsExactly(분당역_ID, 홍대역_ID, 강남역_ID);
     }
 
     /**
@@ -154,7 +145,7 @@ public class LineAcceptanceTest {
     @Test
     void notExistLineExceptionTest() {
         // when
-        ExtractableResponse<Response> response = registerSection(1L, SECTION_PARAM_1);
+        ExtractableResponse<Response> response = registerSection(1L, 홍대역_강남역_구간);
 
         // then
         assertResponseCode(response, HttpStatus.NOT_FOUND);
@@ -169,10 +160,10 @@ public class LineAcceptanceTest {
     @Test
     void notExistStationExceptionTest() {
         // given
-        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
+        ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
 
         // when
-        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), SECTION_PARAM_2);
+        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), 홍대역_서초역_구간);
 
         // then
         assertResponseCode(response, HttpStatus.NOT_FOUND);
@@ -187,10 +178,10 @@ public class LineAcceptanceTest {
     @Test
     void notSameUpStationAndDownStationExceptionTest() {
         // given
-        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
+        ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
 
         // when
-        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), SECTION_PARAM_3);
+        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), 강남역_성수역_구간);
 
         // then
         assertResponseCode(response, HttpStatus.BAD_REQUEST);
@@ -205,10 +196,10 @@ public class LineAcceptanceTest {
     @Test
     void alreadyRegisteredStationExceptionTest() {
         // given
-        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
+        ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
 
         // when
-        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), SECTION_PARAM_4);
+        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), 홍대역_분당역_구간);
 
         // then
         assertResponseCode(response, HttpStatus.BAD_REQUEST);
@@ -223,16 +214,16 @@ public class LineAcceptanceTest {
     @Test
     void deleteSectionTest() {
         // given
-        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
-        registerSection(findId(createdLineResponse), SECTION_PARAM_1);
+        ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
+        registerSection(findId(createdLineResponse), 홍대역_강남역_구간);
 
         // when
-        ExtractableResponse<Response> response = deleteSection(findId(createdLineResponse), STATION_ID_3);
+        ExtractableResponse<Response> response = deleteSection(findId(createdLineResponse), 강남역_ID);
 
         // then
         assertResponseCode(response, HttpStatus.OK);
         List<Long> stationIds = lookUpStationIds(findId(createdLineResponse));
-        assertThat(stationIds).doesNotContain(STATION_ID_3);
+        assertThat(stationIds).doesNotContain(강남역_ID);
     }
 
     /**
@@ -244,11 +235,11 @@ public class LineAcceptanceTest {
     @Test
     void deleteNotDownStationExceptionTest() {
         // given
-        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
-        registerSection(findId(createdLineResponse), SECTION_PARAM_1);
+        ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
+        registerSection(findId(createdLineResponse), 홍대역_강남역_구간);
 
         // when
-        ExtractableResponse<Response> response = deleteSection(findId(createdLineResponse), STATION_ID_2);
+        ExtractableResponse<Response> response = deleteSection(findId(createdLineResponse), 홍대역_ID);
 
         // then
         assertResponseCode(response, HttpStatus.BAD_REQUEST);
@@ -263,10 +254,10 @@ public class LineAcceptanceTest {
     @Test
     void deleteSectionOfOnlyOneSectionLineExceptionTest() {
         // given
-        ExtractableResponse<Response> createdLineResponse = createLine(CREATE_PARAM_1);
+        ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
 
         // when
-        ExtractableResponse<Response> response = deleteSection(findId(createdLineResponse), STATION_ID_2);
+        ExtractableResponse<Response> response = deleteSection(findId(createdLineResponse), 홍대역_ID);
 
         // then
         assertResponseCode(response, HttpStatus.BAD_REQUEST);

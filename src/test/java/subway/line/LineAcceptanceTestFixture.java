@@ -7,75 +7,77 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LineAcceptanceTestFixture {
-    static final String LINE_NAME_1 = "신분당선";
-    static final String LINE_NAME_2 = "분당선";
-    static final String COLOR_1 = "bg-red-600";
-    static final String COLOR_2 = "bg-green-600";
-    static final Long STATION_ID_1 = 1L;
-    static final Long STATION_ID_2 = 2L;
-    static final Long STATION_ID_3 = 3L;
-    static final Long STATION_ID_4 = 4L;
-    static final Long STATION_ID_5 = 5L;
-    static final String STATION_NAME_1 = "분당역";
-    static final String STATION_NAME_2 = "홍대역";
-    static final String STATION_NAME_3 = "강남역";
-    static final String STATION_NAME_4 = "성수역";
+    static final String 신분당선 = "신분당선";
+    static final String 분당선 = "분당선";
+    static final String RED = "bg-red-600";
+    static final String GREEN = "bg-green-600";
+    static final String 분당역 = "분당역";
+    static final String 홍대역 = "홍대역";
+    static final String 강남역 = "강남역";
+    static final String 성수역 = "성수역";
+    static final String 서초역 = "서초역";
+    static final Long 분당역_ID = createStation(분당역);
+    static final Long 홍대역_ID = createStation(홍대역);
+    static final Long 강남역_ID = createStation(강남역);
+    static final Long 성수역_ID = createStation(성수역);
+    static final Long 서초역_ID = createStation(서초역);
     static final Integer DEFAULT_DISTANCE = 10;
 
-    static final Map<String, Object> CREATE_PARAM_1 = Map.of(
-            "name", LINE_NAME_1,
-            "color", COLOR_1,
-            "upStationId", STATION_ID_1,
-            "downStationId", STATION_ID_2,
+    static final Map<String, Object> 신분당선_PARAM = Map.of(
+            "name", 신분당선,
+            "color", RED,
+            "upStationId", 분당역_ID,
+            "downStationId", 홍대역_ID,
             "distance", DEFAULT_DISTANCE
     );
 
-    static final Map<String, Object> CREATE_PARAM_2 = Map.of(
-            "name", LINE_NAME_2,
-            "color", COLOR_2,
-            "upStationId", STATION_ID_1,
-            "downStationId", STATION_ID_3,
+    static final Map<String, Object> 분당선_PARAM = Map.of(
+            "name", 분당선,
+            "color", GREEN,
+            "upStationId", 분당역_ID,
+            "downStationId", 강남역_ID,
             "distance", DEFAULT_DISTANCE
     );
 
     static final Map<String, Object> MODIFY_PARAM = Map.of(
-            "name", LINE_NAME_2,
-            "color", COLOR_2
+            "name", 분당선,
+            "color", GREEN
     );
 
-    static final Map<String, Object> SECTION_PARAM_1 = Map.of(
-            "upStationId", STATION_ID_2,
-            "downStationId", STATION_ID_3,
+    static final Map<String, Object> 홍대역_강남역_구간 = Map.of(
+            "upStationId", 홍대역_ID,
+            "downStationId", 강남역_ID,
             "distance", DEFAULT_DISTANCE
     );
 
-    static final Map<String, Object> SECTION_PARAM_2 = Map.of(
-            "upStationId", STATION_ID_2,
-            "downStationId", STATION_ID_5,
+    static final Map<String, Object> 홍대역_서초역_구간 = Map.of(
+            "upStationId", 홍대역_ID,
+            "downStationId", 서초역_ID,
             "distance", DEFAULT_DISTANCE
     );
 
-    static final Map<String, Object> SECTION_PARAM_3 = Map.of(
-            "upStationId", STATION_ID_3,
-            "downStationId", STATION_ID_4,
+    static final Map<String, Object> 강남역_성수역_구간 = Map.of(
+            "upStationId", 강남역_ID,
+            "downStationId", 성수역_ID,
             "distance", DEFAULT_DISTANCE
     );
 
-    static final Map<String, Object> SECTION_PARAM_4 = Map.of(
-            "upStationId", STATION_ID_2,
-            "downStationId", STATION_ID_1,
+    static final Map<String, Object> 홍대역_분당역_구간 = Map.of(
+            "upStationId", 홍대역_ID,
+            "downStationId", 분당역_ID,
             "distance", DEFAULT_DISTANCE
     );
 
-    static void createStation(Long id, String name) {
+    static Long createStation(String name) {
         Map<String, Object> params = new HashMap<>();
-        params.put("id", id);
         params.put("name", name);
 
-        RestAssured.given().log().all()
+        return RestAssured.given().log().all()
                 .body(params)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/stations")
-                .then().log().all();
+                .then().log().all()
+                .extract()
+                .jsonPath().getLong("id");
     }
 }
