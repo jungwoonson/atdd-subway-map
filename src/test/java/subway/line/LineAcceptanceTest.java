@@ -3,12 +3,15 @@ package subway.line;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
+import subway.util.DatabaseCleanup;
 
 import java.util.List;
 import java.util.Map;
@@ -19,8 +22,15 @@ import static subway.util.AssertUtil.assertResponseCode;
 
 @DisplayName("지하철 역 노선 관련 기능")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class LineAcceptanceTest {
+
+    @Autowired
+    private DatabaseCleanup databaseCleanup;
+
+    @BeforeEach
+    public void setUp() {
+        databaseCleanup.cleanUpTablesForLineTest();
+    }
 
     /**
      * Given 새로운 지하철 노선 정보를 입력하고
@@ -129,7 +139,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
 
         // when
-        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), 홍대역_강남역_구간);
+        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), 홍대역_강남역_구간_PARAM);
 
         // then
         assertResponseCode(response, HttpStatus.CREATED);
@@ -145,7 +155,7 @@ public class LineAcceptanceTest {
     @Test
     void notExistLineExceptionTest() {
         // when
-        ExtractableResponse<Response> response = registerSection(1L, 홍대역_강남역_구간);
+        ExtractableResponse<Response> response = registerSection(1L, 홍대역_강남역_구간_PARAM);
 
         // then
         assertResponseCode(response, HttpStatus.NOT_FOUND);
@@ -163,7 +173,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
 
         // when
-        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), 홍대역_서초역_구간);
+        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), 홍대역_서초역_구간_PARAM);
 
         // then
         assertResponseCode(response, HttpStatus.NOT_FOUND);
@@ -181,7 +191,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
 
         // when
-        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), 강남역_성수역_구간);
+        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), 강남역_성수역_구간_PARAM);
 
         // then
         assertResponseCode(response, HttpStatus.BAD_REQUEST);
@@ -199,7 +209,7 @@ public class LineAcceptanceTest {
         ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
 
         // when
-        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), 홍대역_분당역_구간);
+        ExtractableResponse<Response> response = registerSection(findId(createdLineResponse), 홍대역_분당역_구간_PARAM);
 
         // then
         assertResponseCode(response, HttpStatus.BAD_REQUEST);
@@ -215,7 +225,7 @@ public class LineAcceptanceTest {
     void deleteSectionTest() {
         // given
         ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
-        registerSection(findId(createdLineResponse), 홍대역_강남역_구간);
+        registerSection(findId(createdLineResponse), 홍대역_강남역_구간_PARAM);
 
         // when
         ExtractableResponse<Response> response = deleteSection(findId(createdLineResponse), 강남역_ID);
@@ -236,7 +246,7 @@ public class LineAcceptanceTest {
     void deleteNotDownStationExceptionTest() {
         // given
         ExtractableResponse<Response> createdLineResponse = createLine(신분당선_PARAM);
-        registerSection(findId(createdLineResponse), 홍대역_강남역_구간);
+        registerSection(findId(createdLineResponse), 홍대역_강남역_구간_PARAM);
 
         // when
         ExtractableResponse<Response> response = deleteSection(findId(createdLineResponse), 홍대역_ID);
