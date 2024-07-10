@@ -73,7 +73,7 @@ public class LineService {
     }
 
     private Line createLine(LineRequest lineRequest) {
-        Line line = new Line.Builder()
+        Line line = Line.builder()
                 .name(lineRequest.getName())
                 .color(lineRequest.getColor())
                 .build();
@@ -86,7 +86,7 @@ public class LineService {
     }
 
     private LineResponse createLineResponse(Line line) {
-        return new LineResponse.Builder()
+        return LineResponse.builder()
                 .id(line.getId())
                 .name(line.getName())
                 .color(line.getColor())

@@ -62,6 +62,10 @@ public class Line {
         sections.delete(stationId);
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static class Builder {
         private Long id;
         private String name;
