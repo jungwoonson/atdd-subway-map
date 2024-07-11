@@ -1,6 +1,9 @@
 package subway.line;
 
+import subway.station.Station;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Line {
@@ -12,12 +15,9 @@ public class Line {
     private String name;
     @Column(length = 20, nullable = false)
     private String color;
-    @Column(nullable = false)
-    private Long upStationId;
-    @Column(nullable = false)
-    private Long downStationId;
-    @Column(nullable = false)
-    private Integer distance;
+
+    @Embedded
+    private Sections sections;
 
     public Line() {
     }
@@ -26,14 +26,30 @@ public class Line {
         this.id = builder.id;
         this.name = builder.name;
         this.color = builder.color;
-        this.upStationId = builder.upStationId;
-        this.downStationId = builder.downStationId;
-        this.distance = builder.distance;
+        this.sections = Sections.of(this, builder.upStation, builder.downStation, builder.distance);
     }
 
     public void modify(String name, String color) {
         this.name = name;
         this.color = color;
+    }
+
+    public void registerSection(Station upStation, Station downStation, Integer distance) {
+        sections.add(createNotFirstStation(this, upStation, downStation, distance));
+    }
+
+    private static Section createNotFirstStation(Line line, Station upStation, Station downStation, Integer distance) {
+        return Section.builder()
+                .line(line)
+                .upStation(upStation)
+                .downStation(downStation)
+                .distance(distance)
+                .isFirst(false)
+                .build();
+    }
+
+    public List<Long> getStationIds() {
+        return sections.getStationIds();
     }
 
     public Long getId() {
@@ -48,24 +64,20 @@ public class Line {
         return color;
     }
 
-    public Long getUpStationId() {
-        return upStationId;
+    public void deleteSection(Long stationId) {
+        sections.delete(stationId);
     }
 
-    public Long getDownStationId() {
-        return downStationId;
-    }
-
-    public Integer getDistance() {
-        return distance;
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static class Builder {
         private Long id;
         private String name;
         private String color;
-        private Long upStationId;
-        private Long downStationId;
+        private Station upStation;
+        private Station downStation;
         private Integer distance;
 
         public Builder id(Long id) {
@@ -83,13 +95,13 @@ public class Line {
             return this;
         }
 
-        public Builder upStationId(Long upStationId) {
-            this.upStationId = upStationId;
+        public Builder upStation(Station upStation) {
+            this.upStation = upStation;
             return this;
         }
 
-        public Builder downStationId(Long downStationId) {
-            this.downStationId = downStationId;
+        public Builder downStation(Station downStation) {
+            this.downStation = downStation;
             return this;
         }
 

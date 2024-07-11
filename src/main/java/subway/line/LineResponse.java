@@ -43,6 +43,10 @@ public class LineResponse {
         this.stations = stations;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static class Builder {
         private Long id;
         private String name;

@@ -2,7 +2,11 @@ package subway.line;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import subway.line.exception.NotExistLineException;
+import subway.station.Station;
+import subway.station.StationRepository;
 import subway.station.StationResponse;
+import subway.station.exception.NotExistStationException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,8 +17,11 @@ public class LineService {
 
     private LineRepository lineRepository;
 
-    public LineService(LineRepository lineRepository) {
+    private StationRepository stationRepository;
+
+    public LineService(LineRepository lineRepository, StationRepository stationRepository) {
         this.lineRepository = lineRepository;
+        this.stationRepository = stationRepository;
     }
 
     @Transactional
@@ -31,12 +38,12 @@ public class LineService {
     }
 
     public LineResponse findLine(Long id) {
-        return createLineResponse(lineRepository.findOneById(id));
+        return createLineResponse(findLineBy(id));
     }
 
     @Transactional
     public LineResponse modifyLine(Long id, LineRequest lineRequest) {
-        Line line = lineRepository.findOneById(id);
+        Line line = findLineBy(id);
         line.modify(lineRequest.getName(), lineRequest.getColor());
         return createLineResponse(lineRepository.save(line));
     }
@@ -46,44 +53,60 @@ public class LineService {
         lineRepository.deleteById(id);
     }
 
+    @Transactional
+    public LineResponse registerSections(Long id, SectionRequest sectionRequest) {
+        Station upStation = findStationBy(sectionRequest.getUpStationId());
+        Station downStation = findStationBy(sectionRequest.getDownStationId());
+        Line line = findLineBy(id);
+        line.registerSection(upStation, downStation, sectionRequest.getDistance());
+        return createLineResponse(lineRepository.save(line));
+    }
+
+    private Line findLineBy(Long id) {
+        return lineRepository.findOneById(id)
+                .orElseThrow(NotExistLineException::new);
+    }
+
+    @Transactional
+    public LineResponse deleteSection(Long lineId, Long stationId) {
+        Line line = findLineBy(lineId);
+        line.deleteSection(stationId);
+        return createLineResponse(lineRepository.save(line));
+    }
+
     private Line createLine(LineRequest lineRequest) {
-        return new Line.Builder()
+        return Line.builder()
                 .name(lineRequest.getName())
                 .color(lineRequest.getColor())
-                .upStationId(lineRequest.getUpStationId())
-                .downStationId(lineRequest.getDownStationId())
+                .upStation(findStationBy(lineRequest.getUpStationId()))
+                .downStation(findStationBy(lineRequest.getDownStationId()))
                 .distance(lineRequest.getDistance())
                 .build();
     }
 
     private LineResponse createLineResponse(Line line) {
-        return new LineResponse.Builder()
+        return LineResponse.builder()
                 .id(line.getId())
                 .name(line.getName())
                 .color(line.getColor())
-                .stations(createStations(line.getUpStationId(), line.getDownStationId()))
+                .stations(createStationResponses(line.getStationIds()))
                 .build();
     }
 
-    private List<StationResponse> createStations(Long upStationId, Long downStationId) {
-        return List.of(
-                createStation(upStationId),
-                createStation(downStationId)
-        );
+    private List<StationResponse> createStationResponses(List<Long> stationIds) {
+        return stationIds.stream()
+                .map(this::createStation)
+                .collect(Collectors.toList());
     }
 
     private StationResponse createStation(Long stationId) {
-        return new StationResponse(stationId, findStationNameById(stationId));
+        Station station = stationRepository.findById(stationId)
+                .orElseThrow(NotExistStationException::new);
+        return new StationResponse(stationId, station.getName());
     }
 
-    private String findStationNameById(Long stationId) {
-        switch (stationId.intValue()) {
-            case 1:
-                return "지하철역";
-            case 2:
-                return "새로운지하철역";
-            default:
-                return "또다른지하철역";
-        }
+    private Station findStationBy(Long stationId) {
+        return stationRepository.findById(stationId)
+                .orElseThrow(NotExistStationException::new);
     }
 }
